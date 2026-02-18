@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Synthia - Synthetic Customer Platform
 
-## Getting Started
+A multi-tenant SaaS platform where companies can interact with AI-based synthetic customer personas via chat.
 
-First, run the development server:
+## 🏗 Tech Stack
+
+- **Frontend**: Next.js (App Router), Tailwind CSS
+- **Backend**: Supabase (EU region), PostgreSQL, Row Level Security (RLS)
+- **AI**: OpenAI API (EU endpoint)
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+1. Create a Supabase project in the EU region
+2. Get your OpenAI API key with access to GPT-4
+3. Set up environment variables
+
+### Environment Variables
+
+Create a `.env.local` file in the root directory:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+OPENAI_API_KEY=your_openai_api_key
+```
+
+### Database Setup
+
+Run the migration in `supabase/migrations/001_initial_schema.sql` to create the database schema with RLS policies.
+
+### Installation
+
+```bash
+npm install
+```
+
+### Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📊 Database Schema
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **companies**: Company information with branding
+- **personas**: AI customer personas (max 3 per company)
+- **conversations**: Chat sessions per persona
+- **messages**: Individual chat messages
 
-## Learn More
+## 🔐 Multi-Tenant Architecture
 
-To learn more about Next.js, take a look at the following resources:
+- Company-level authentication via Supabase Auth
+- Row Level Security ensures complete data isolation
+- Each company can only access their own data
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🤖 AI Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Persona-driven conversations using OpenAI GPT-4
+- Context-aware responses based on persona parameters
+- Company public context integration
+- No data training or prompt logging
 
-## Deploy on Vercel
+## 🎨 UI Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Clean, professional interface
+- Company branding (logo, primary color)
+- Modern chat UI with conversation history
+- Responsive design
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🚫 Privacy Constraints
+
+- EU hosting only
+- No scraping or document ingestion
+- No advanced analytics
+- No data sharing between companies
+- No use of company data for AI training
+
+## 📝 License
+
+This is a lean validation MVP for synthetic customer interactions.
