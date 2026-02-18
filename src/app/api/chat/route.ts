@@ -3,12 +3,13 @@ import OpenAI from 'openai';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY!,
-    baseURL: 'https://api.openai.com/v1',
-});
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
+    const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY!,
+        baseURL: 'https://api.openai.com/v1',
+    });
     try {
         const { personaId, message, conversationHistory } =
             await request.json();
