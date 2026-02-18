@@ -1,8 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
 import type { Persona, Conversation, Message, Company } from '@/types';
-import { Send, MessageSquare } from 'lucide-react';
+import { MessageSquare, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import MessageBubble from './MessageBubble';
+import TypingIndicator from './TypingIndicator';
+import ChatInput from './ChatInput';
+import { Button } from './ui/Button';
 
 interface ChatInterfaceProps {
     persona: Persona;
@@ -24,8 +27,8 @@ export default function ChatInterface({
     onConversationUpdate,
 }: ChatInterfaceProps) {
     const [messages, setMessages] = useState<Message[]>([]);
-    const [inputMessage, setInputMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(true);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -39,6 +42,8 @@ export default function ChatInterface({
     useEffect(() => {
         if (selectedConversation) {
             fetchMessages(selectedConversation.id);
+        } else {
+            setMessages([]);
         }
     }, [selectedConversation]);
 
@@ -92,14 +97,11 @@ export default function ChatInterface({
         }
     };
 
-    const sendMessage = async () => {
-        if (!inputMessage.trim() || !selectedConversation || isLoading) return;
+    const handleSendMessage = async (userMessage: string) => {
+        if (!selectedConversation || isLoading) return;
 
         setIsLoading(true);
-        const userMessage = inputMessage.trim();
-        setInputMessage('');
 
-        // Add user message immediately for better UX
         const tempUserMessage: Message = {
             id: `temp-${Date.now()}`,
             conversation_id: selectedConversation.id,
@@ -110,7 +112,6 @@ export default function ChatInterface({
         setMessages((prev) => [...prev, tempUserMessage]);
 
         try {
-            // Save user message to database
             const { data: savedUserMessage, error: userError } = await supabase
                 .from('messages')
                 .insert({
@@ -123,17 +124,14 @@ export default function ChatInterface({
 
             if (userError) throw userError;
 
-            // Update messages with the saved message
             setMessages((prev) =>
                 prev.map((msg) =>
                     msg.id === tempUserMessage.id ? savedUserMessage : msg,
                 ),
             );
 
-            // Generate AI response
             const aiResponse = await generateAIResponse(userMessage, messages);
 
-            // Save AI response to database
             const { data: savedAiMessage, error: aiError } = await supabase
                 .from('messages')
                 .insert({
@@ -148,7 +146,6 @@ export default function ChatInterface({
 
             setMessages((prev) => [...prev, savedAiMessage]);
 
-            // Update conversation title if it's the first message
             if (messages.length === 0) {
                 const { data: updatedConversation } = await supabase
                     .from('conversations')
@@ -167,7 +164,6 @@ export default function ChatInterface({
             }
         } catch (error) {
             console.error('Error sending message:', error);
-            // Remove the temporary message if there was an error
             setMessages((prev) =>
                 prev.filter((msg) => msg.id !== tempUserMessage.id),
             );
@@ -177,35 +173,38 @@ export default function ChatInterface({
     };
 
     return (
-        <div className='flex gap-6 h-[calc(100vh-12rem)]'>
-            {/* Conversations Sidebar */}
-            <div className='w-80 bg-white rounded-lg shadow-sm border border-gray-200'>
+        <div className='flex h-[calc(100vh-8rem)] bg-white'>
+            {/* Sidebar */}
+            <div
+                className={`${
+                    sidebarOpen ? 'w-64' : 'w-0'
+                } transition-all duration-300 overflow-hidden border-r border-gray-200 bg-gray-50 flex flex-col`}
+            >
                 <div className='p-4 border-b border-gray-200'>
-                    <div className='flex justify-between items-center'>
-                        <h3 className='font-semibold text-gray-900'>
-                            Conversations
-                        </h3>
-                        <button
-                            onClick={onNewConversation}
-                            className='text-sm text-blue-600 hover:text-blue-700'
-                        >
-                            New Chat
-                        </button>
-                    </div>
+                    <Button
+                        variant='primary'
+                        size='sm'
+                        className='w-full'
+                        onClick={onNewConversation}
+                    >
+                        <Plus className='w-4 h-4 mr-2' />
+                        New Chat
+                    </Button>
                 </div>
-                <div className='overflow-y-auto h-full'>
+
+                <div className='flex-1 overflow-y-auto p-2'>
                     {conversations.map((conversation) => (
                         <button
                             key={conversation.id}
                             onClick={() => onConversationSelect(conversation)}
-                            className={`w-full text-left p-4 hover:bg-gray-50 border-b border-gray-100 ${
+                            className={`w-full text-left p-3 rounded-lg mb-1 transition-colors ${
                                 selectedConversation?.id === conversation.id
-                                    ? 'bg-blue-50'
-                                    : ''
+                                    ? 'bg-white shadow-sm border border-gray-200'
+                                    : 'hover:bg-white/50'
                             }`}
                         >
-                            <div className='flex items-center'>
-                                <MessageSquare className='w-4 h-4 mr-2 text-gray-400' />
+                            <div className='flex items-center gap-2'>
+                                <MessageSquare className='w-4 h-4 text-gray-400 shrink-0' />
                                 <div className='flex-1 min-w-0'>
                                     <p className='text-sm font-medium text-gray-900 truncate'>
                                         {conversation.title}
@@ -222,104 +221,93 @@ export default function ChatInterface({
                 </div>
             </div>
 
-            {/* Chat Window */}
-            <div className='flex-1 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col'>
-                {/* Chat Header */}
-                <div className='p-4 border-b border-gray-200'>
-                    <div className='flex items-center'>
-                        {persona.avatar_url ? (
-                            <Image
-                                src={persona.avatar_url}
-                                alt={persona.name}
-                                width={40}
-                                height={40}
-                                className='w-10 h-10 rounded-full mr-3'
-                            />
+            {/* Main Chat Area */}
+            <div className='flex-1 flex flex-col'>
+                {/* Toggle Sidebar Button */}
+                <div className='absolute left-0 top-1/2 -translate-y-1/2 z-10'>
+                    <button
+                        onClick={() => setSidebarOpen(!sidebarOpen)}
+                        className='bg-white border border-gray-200 rounded-r-lg p-2 shadow-sm hover:bg-gray-50 transition-colors'
+                    >
+                        {sidebarOpen ? (
+                            <ChevronLeft className='w-4 h-4 text-gray-600' />
                         ) : (
-                            <div
-                                className='w-10 h-10 rounded-full mr-3 flex items-center justify-center text-white font-semibold'
-                                style={{
-                                    backgroundColor:
-                                        company.primary_color || '#6366f1',
-                                }}
-                            >
-                                {persona.name.charAt(0).toUpperCase()}
-                            </div>
+                            <ChevronRight className='w-4 h-4 text-gray-600' />
                         )}
-                        <div>
-                            <h3 className='font-semibold text-gray-900'>
-                                {persona.name}
+                    </button>
+                </div>
+
+                {selectedConversation ? (
+                    <>
+                        {/* Messages */}
+                        <div className='flex-1 overflow-y-auto'>
+                            {messages.length === 0 ? (
+                                <div className='h-full flex items-center justify-center'>
+                                    <div className='text-center max-w-md px-4'>
+                                        <div className='w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4'>
+                                            <MessageSquare className='w-8 h-8 text-blue-600' />
+                                        </div>
+                                        <h3 className='text-xl font-semibold text-gray-900 mb-2'>
+                                            Start a conversation with {persona.name}
+                                        </h3>
+                                        <p className='text-gray-600 mb-4'>
+                                            {persona.short_description}
+                                        </p>
+                                        <p className='text-sm text-gray-500'>
+                                            Ask questions, test messaging, or explore their perspective
+                                        </p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div>
+                                    {messages.map((message) => (
+                                        <MessageBubble
+                                            key={message.id}
+                                            role={message.role}
+                                            content={message.content}
+                                            timestamp={message.created_at}
+                                            personaName={persona.name}
+                                            personaAvatar={persona.avatar_url}
+                                            personaColor={company.primary_color}
+                                        />
+                                    ))}
+                                    {isLoading && (
+                                        <div className='bg-gray-50 py-4'>
+                                            <div className='max-w-3xl mx-auto px-4'>
+                                                <TypingIndicator />
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div ref={messagesEndRef} />
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Input */}
+                        <ChatInput
+                            onSend={handleSendMessage}
+                            disabled={isLoading}
+                            placeholder={`Message ${persona.name}...`}
+                        />
+                    </>
+                ) : (
+                    <div className='h-full flex items-center justify-center'>
+                        <div className='text-center max-w-md px-4'>
+                            <MessageSquare className='w-16 h-16 text-gray-300 mx-auto mb-4' />
+                            <h3 className='text-xl font-semibold text-gray-900 mb-2'>
+                                No conversation selected
                             </h3>
-                            <p className='text-sm text-gray-500'>
-                                {persona.short_description}
+                            <p className='text-gray-600 mb-6'>
+                                Start a new conversation or select an existing one from the sidebar
                             </p>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Messages */}
-                <div className='flex-1 overflow-y-auto p-4 space-y-4'>
-                    {messages.map((message) => (
-                        <div
-                            key={message.id}
-                            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                        >
-                            <div
-                                className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                                    message.role === 'user'
-                                        ? 'bg-blue-600 text-white'
-                                        : 'bg-gray-100 text-gray-900'
-                                }`}
+                            <Button
+                                variant='primary'
+                                size='lg'
+                                onClick={onNewConversation}
                             >
-                                <p className='text-sm'>{message.content}</p>
-                                <p
-                                    className={`text-xs mt-1 ${
-                                        message.role === 'user'
-                                            ? 'text-blue-100'
-                                            : 'text-gray-500'
-                                    }`}
-                                >
-                                    {new Date(
-                                        message.created_at,
-                                    ).toLocaleTimeString()}
-                                </p>
-                            </div>
-                        </div>
-                    ))}
-                    {isLoading && (
-                        <div className='flex justify-start'>
-                            <div className='bg-gray-100 text-gray-900 px-4 py-2 rounded-lg'>
-                                <p className='text-sm'>Thinking...</p>
-                            </div>
-                        </div>
-                    )}
-                    <div ref={messagesEndRef} />
-                </div>
-
-                {/* Input */}
-                {selectedConversation && (
-                    <div className='p-4 border-t border-gray-200'>
-                        <div className='flex gap-2'>
-                            <input
-                                type='text'
-                                value={inputMessage}
-                                onChange={(e) =>
-                                    setInputMessage(e.target.value)
-                                }
-                                onKeyPress={(e) =>
-                                    e.key === 'Enter' && sendMessage()
-                                }
-                                placeholder='Type your message...'
-                                className='flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                disabled={isLoading}
-                            />
-                            <button
-                                onClick={sendMessage}
-                                disabled={isLoading || !inputMessage.trim()}
-                                className='px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed'
-                            >
-                                <Send className='w-5 h-5' />
-                            </button>
+                                <Plus className='w-5 h-5 mr-2' />
+                                Start New Conversation
+                            </Button>
                         </div>
                     </div>
                 )}

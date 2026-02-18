@@ -1,59 +1,108 @@
-import Image from 'next/image'
-import type { Persona } from '@/types'
-import { MessageCircle } from 'lucide-react'
+import type { Persona } from '@/types';
+import { MessageCircle, User } from 'lucide-react';
+import { Card } from './ui/Card';
+import { Avatar } from './ui/Avatar';
+import { Button } from './ui/Button';
 
 interface PersonaCardProps {
-  persona: Persona
-  primaryColor?: string
+    persona: Persona;
+    primaryColor?: string;
 }
 
-export default function PersonaCard({ persona, primaryColor }: PersonaCardProps) {
-  const handleStartConversation = () => {
-    window.location.href = `/chat/${persona.id}`
-  }
+export default function PersonaCard({
+    persona,
+    primaryColor,
+}: PersonaCardProps) {
+    const handleStartConversation = () => {
+        window.location.href = `/chat/${persona.id}`;
+    };
 
-  return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-      <div className="flex items-start mb-4">
-        {persona.avatar_url ? (
-          <Image
-            src={persona.avatar_url}
-            alt={persona.name}
-            width={48}
-            height={48}
-            className="w-12 h-12 rounded-full mr-3"
-          />
-        ) : (
-          <div 
-            className="w-12 h-12 rounded-full mr-3 flex items-center justify-center text-white font-semibold"
-            style={{ backgroundColor: primaryColor || '#6366f1' }}
-          >
-            {persona.name.charAt(0).toUpperCase()}
-          </div>
-        )}
-        <div className="flex-1">
-          <h3 className="font-semibold text-gray-900 mb-1">{persona.name}</h3>
-        </div>
-      </div>
-      
-      <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-        {persona.short_description}
-      </p>
-      
-      <button
-        onClick={handleStartConversation}
-        className="w-full flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md text-white transition-colors"
-        style={{ backgroundColor: primaryColor || '#6366f1' }}
-        onMouseOver={(e) => {
-          e.currentTarget.style.opacity = '0.9'
-        }}
-        onMouseOut={(e) => {
-          e.currentTarget.style.opacity = '1'
-        }}
-      >
-        <MessageCircle className="w-4 h-4 mr-2" />
-        Start Conversation
-      </button>
-    </div>
-  )
+    const personaData = persona.persona_parameters_json as {
+        age?: number;
+        occupation?: string;
+        location?: string;
+    };
+
+    return (
+        <Card
+            hover
+            padding='none'
+            className='overflow-hidden group cursor-pointer transition-all duration-300 hover:scale-[1.02] animate-fade-in'
+            onClick={handleStartConversation}
+        >
+            {/* Header with gradient */}
+            <div
+                className='h-24 bg-gradient-to-br from-blue-500 to-blue-600 relative'
+                style={{
+                    background: primaryColor
+                        ? `linear-gradient(135deg, ${primaryColor} 0%, ${primaryColor}dd 100%)`
+                        : undefined,
+                }}
+            >
+                <div className='absolute inset-0 bg-black/10'></div>
+            </div>
+
+            {/* Content */}
+            <div className='p-6 -mt-10 relative'>
+                {/* Avatar */}
+                <div className='mb-4'>
+                    <Avatar
+                        src={persona.avatar_url}
+                        alt={persona.name}
+                        size='xl'
+                        fallback={persona.name.charAt(0).toUpperCase()}
+                        color={primaryColor || '#3b82f6'}
+                        className='ring-4 ring-white shadow-lg'
+                    />
+                </div>
+
+                {/* Name and Title */}
+                <div className='mb-3'>
+                    <h3 className='text-xl font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors'>
+                        {persona.name}
+                    </h3>
+                    {personaData.occupation && (
+                        <p className='text-sm text-gray-600 font-medium'>
+                            {personaData.occupation}
+                        </p>
+                    )}
+                </div>
+
+                {/* Description */}
+                <p className='text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed'>
+                    {persona.short_description}
+                </p>
+
+                {/* Meta Info */}
+                <div className='flex items-center gap-4 mb-4 text-xs text-gray-500'>
+                    {personaData.age && (
+                        <div className='flex items-center gap-1'>
+                            <User className='w-3 h-3' />
+                            <span>{personaData.age} years</span>
+                        </div>
+                    )}
+                    {personaData.location && (
+                        <div className='flex items-center gap-1'>
+                            <span>📍</span>
+                            <span>{personaData.location}</span>
+                        </div>
+                    )}
+                </div>
+
+                {/* Action Button */}
+                <Button
+                    variant='primary'
+                    size='md'
+                    className='w-full group-hover:shadow-md transition-shadow'
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleStartConversation();
+                    }}
+                >
+                    <MessageCircle className='w-4 h-4 mr-2' />
+                    Start Conversation
+                </Button>
+            </div>
+        </Card>
+    );
 }

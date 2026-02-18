@@ -124,39 +124,40 @@ export default function ChatPage() {
     }
 
     return (
-        <div className='min-h-screen bg-gray-50'>
+        <div className='min-h-screen bg-white flex flex-col'>
             {/* Header */}
-            <header className='bg-white shadow-sm border-b'>
+            <header className='bg-white shadow-sm border-b sticky top-0 z-50'>
                 <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                     <div className='flex justify-between items-center h-16'>
-                        <div className='flex items-center'>
+                        <div className='flex items-center space-x-4'>
                             <button
                                 onClick={() => router.push('/dashboard')}
-                                className='text-gray-500 hover:text-gray-700 mr-4'
+                                className='text-gray-600 hover:text-gray-900 font-medium transition-colors flex items-center gap-2'
                             >
-                                ← Back
+                                <span>←</span>
+                                <span>Back to Dashboard</span>
                             </button>
-                            {company.logo_url && (
+                            <div className='h-6 w-px bg-gray-300'></div>
+                            {company.logo_url ? (
                                 <Image
                                     src={company.logo_url}
                                     alt={company.name}
                                     width={32}
                                     height={32}
-                                    className='h-8 w-8 mr-3 rounded'
+                                    className='h-8 w-8 rounded'
                                 />
+                            ) : (
+                                <div className='w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded flex items-center justify-center text-white text-sm font-bold'>
+                                    {company.name?.charAt(0) || 'P'}
+                                </div>
                             )}
                             <div>
-                                <h1
-                                    className='text-xl font-semibold'
-                                    style={{
-                                        color:
-                                            company.primary_color || '#1f2937',
-                                    }}
-                                >
-                                    {company.name || 'Synthia'}
+                                <h1 className='text-lg font-bold text-gray-900'>
+                                    {persona.name}
                                 </h1>
-                                <p className='text-sm text-gray-500'>
-                                    Chat with {persona.name}
+                                <p className='text-xs text-gray-500'>
+                                    {persona.short_description.substring(0, 50)}
+                                    ...
                                 </p>
                             </div>
                         </div>
@@ -165,7 +166,7 @@ export default function ChatPage() {
             </header>
 
             {/* Chat Interface */}
-            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+            <div className='flex-1'>
                 <ChatInterface
                     persona={persona}
                     company={company}
