@@ -30,9 +30,12 @@ export default function TypingText({
     }, [currentIndex, text, speed, onComplete]);
 
     return (
-        <div className='prose prose-sm max-w-none text-gray-900'>
+        <div className='prose prose-invert prose-sm max-w-none text-white/90'>
             <ReactMarkdown
                 components={{
+                    p({ children }) {
+                        return <span className='inline'>{children}</span>;
+                    },
                     code({
                         inline,
                         className,

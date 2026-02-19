@@ -1,8 +1,12 @@
-import { Copy, Sparkles, User } from 'lucide-react';
+import { Copy, Sparkles, User, Check } from 'lucide-react';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+import { staggerItem } from '@/lib/animations';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import clsx from 'clsx';
 import TypingText from './TypingText';
 
 interface MessageBubbleProps {
@@ -34,120 +38,150 @@ export default function MessageBubble({
 
     const isUser = role === 'user';
 
+    const formatTime = (dateStr: string) => {
+        try {
+            return new Date(dateStr).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+            });
+        } catch (e) {
+            return '';
+        }
+    };
+
     return (
-        <div
-            className={`group relative py-6 px-4 ${
-                isUser ? 'bg-white' : 'bg-gray-50/50'
-            } hover:bg-gray-50 transition-colors animate-fade-in border-b border-gray-100`}
+        <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={clsx(
+                'group relative w-full py-8 px-6',
+                isUser ? 'bg-primary-500/[0.01]' : 'bg-transparent'
+            )}
         >
-            <div className={` flex gap-4 ${isUser ? 'flex-row-reverse' : ''}`}>
-                {/* Avatar */}
-                <div className='flex-shrink-0'>
-                    {isUser ? (
-                        <div className='w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm'>
-                            <User className='w-4 h-4 text-white' />
-                        </div>
-                    ) : (
-                        <div className='w-8 h-8 bg-[var(--sidebar-bg)] rounded-lg flex items-center justify-center shadow-sm'>
-                            <Sparkles className='w-5 h-5 text-white' />
-                        </div>
+            <div className={clsx(
+                'max-w-4xl mx-auto flex items-start gap-6',
+                isUser && 'flex-row-reverse'
+            )}>
+                {/* Avatar Section */}
+                <div className="relative flex-shrink-0">
+                    {!isUser && (
+                        <div className="absolute inset-0 bg-primary-500/20 blur-xl rounded-full animate-pulse" />
                     )}
+                    <div className={clsx(
+                        'relative w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center shadow-2xl border transition-transform duration-500 group-hover:scale-110',
+                        isUser 
+                            ? 'bg-gradient-to-br from-indigo-500 to-primary-600 border-white/20' 
+                            : 'bg-white/[0.03] border-white/10'
+                    )}>
+                        {isUser ? (
+                            <User className="w-6 h-6 text-white" />
+                        ) : personaAvatar ? (
+                            <img src={personaAvatar} alt={personaName} className="w-full h-full object-cover" />
+                        ) : (
+                            <Sparkles className="w-6 h-6 text-primary-400" />
+                        )}
+                    </div>
                 </div>
 
-                {/* Content */}
-                <div className='flex-1 min-w-0'>
-                    <div
-                        className={`flex items-center gap-2 mb-2 ${isUser ? 'justify-end' : ''}`}
-                    >
-                        <span className='font-semibold text-sm text-gray-900'>
-                            {isUser ? 'You' : personaName || 'Assistant'}
+                {/* Content Section */}
+                <div className={clsx(
+                    'flex items-start flex-col gap-2.5 max-w-[85%]',
+                    isUser ? 'items-end' : 'items-start'
+                )}>
+                    {/* Metadata */}
+                    <div className={clsx(
+                        'flex items-center gap-3 px-1',
+                        isUser && 'flex-row-reverse'
+                    )}>
+                        <span className="text-[11px] font-bold text-white uppercase tracking-[0.15em] opacity-80">
+                            {isUser ? 'You' : personaName}
                         </span>
-                        <span className='text-xs text-gray-500'>
-                            {new Date(timestamp).toLocaleTimeString([], {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                            })}
+                        <div className="w-1 h-1 bg-white/20 rounded-full" />
+                        <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">
+                            {formatTime(timestamp || new Date().toISOString())}
                         </span>
                     </div>
 
-                    {isUser ? (
-                        <div className='text-gray-900 whitespace-pre-wrap text-right'>
-                            {content}
+                    {/* Bubble */}
+                    <div className={clsx(
+                        'relative px-6 py-4 rounded-[2rem] transition-all duration-500',
+                        isUser 
+                            ? 'bg-gradient-to-br from-primary-500/30 to-primary-700/20 backdrop-blur-3xl border border-white/20 shadow-[0_10px_40px_rgba(124,58,237,0.15)] hover:shadow-[0_15px_50px_rgba(124,58,237,0.25)]'
+                            : 'bg-white/[0.03] backdrop-blur-3xl border border-white/10 shadow-xl hover:bg-white/[0.05]',
+                        isUser ? 'rounded-tr-lg' : 'rounded-tl-lg'
+                    )}>
+                        <div className={clsx(
+                            'prose prose-invert max-w-none text-[15px] leading-relaxed font-medium selection:bg-primary-500/30',
+                            isUser ? 'prose-p:text-white prose-headings:text-white' : 'prose-p:text-white/90 prose-headings:text-white'
+                        )}>
+                            {isTyping ? (
+                                <TypingText text={content} />
+                            ) : (
+                                <ReactMarkdown
+                                    components={{
+                                        code({ node, inline, className, children, ...props }: any) {
+                                            const match = /language-(\w+)/.exec(className || '');
+                                            return !inline && match ? (
+                                                <div className='group/code relative my-6'>
+                                                    <div className='absolute -inset-2 bg-gradient-to-br from-primary-500/20 to-indigo-500/20 rounded-2xl blur opacity-0 group-hover/code:opacity-100 transition-opacity duration-500' />
+                                                    <div className="relative rounded-xl overflow-hidden border border-white/10 bg-[#0a0a0a] shadow-2xl">
+                                                        <div className='flex items-center justify-between px-4 py-2 bg-white/[0.03] border-b border-white/5'>
+                                                            <span className='text-[10px] font-bold text-white/40 uppercase tracking-widest'>
+                                                                {match[1]}
+                                                            </span>
+                                                            <button
+                                                                onClick={handleCopy}
+                                                                className='p-1.5 hover:bg-white/10 rounded-lg transition-colors text-white/40 hover:text-white'
+                                                                title='Copy code'
+                                                            >
+                                                                {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className='w-3.5 h-3.5' />}
+                                                            </button>
+                                                        </div>
+                                                        <SyntaxHighlighter
+                                                            style={oneDark}
+                                                            language={match[1]}
+                                                            PreTag='div'
+                                                            customStyle={{
+                                                                margin: 0,
+                                                                padding: '1.5rem',
+                                                                background: 'transparent',
+                                                                fontSize: '13px',
+                                                                lineHeight: '1.6',
+                                                            }}
+                                                            {...props}
+                                                        >
+                                                            {String(children).replace(/\n$/, '')}
+                                                        </SyntaxHighlighter>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <code className="bg-white/10 px-1.5 py-0.5 rounded text-primary-300 font-mono text-sm" {...props}>
+                                                    {children}
+                                                </code>
+                                            );
+                                        },
+                                    }}
+                                >
+                                    {content}
+                                </ReactMarkdown>
+                            )}
                         </div>
-                    ) : isTyping ? (
-                        <TypingText text={content} speed={20} />
-                    ) : (
-                        <div className='prose prose-sm max-w-none text-gray-900'>
-                            <ReactMarkdown
-                                components={{
-                                    code({
-                                        inline,
-                                        className,
-                                        children,
-                                        ...props
-                                    }: {
-                                        inline?: boolean;
-                                        className?: string;
-                                        children?: React.ReactNode;
-                                    }) {
-                                        const match = /language-(\w+)/.exec(
-                                            className || '',
-                                        );
-                                        return !inline && match ? (
-                                            <div className='relative group/code'>
-                                                <SyntaxHighlighter
-                                                    style={oneDark}
-                                                    language={match[1]}
-                                                    PreTag='div'
-                                                    className='rounded-lg text-sm'
-                                                    {...props}
-                                                >
-                                                    {String(children).replace(
-                                                        /\n$/,
-                                                        '',
-                                                    )}
-                                                </SyntaxHighlighter>
-                                                <button
-                                                    onClick={() =>
-                                                        navigator.clipboard.writeText(
-                                                            String(children),
-                                                        )
-                                                    }
-                                                    className='absolute top-2 right-2 p-2 bg-gray-700 hover:bg-gray-600 rounded text-white text-xs opacity-0 group-hover/code:opacity-100 transition-opacity'
-                                                >
-                                                    <Copy className='w-3 h-3' />
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <code
-                                                className='bg-gray-200 px-1.5 py-0.5 rounded text-sm font-mono'
-                                                {...props}
-                                            >
-                                                {children}
-                                            </code>
-                                        );
-                                    },
-                                }}
-                            >
-                                {content}
-                            </ReactMarkdown>
-                        </div>
-                    )}
+                    </div>
 
                     {/* Actions */}
-                    <div
-                        className={`flex items-center gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity ${isUser ? 'justify-end' : ''}`}
-                    >
+                    <div className={clsx(
+                        'flex items-center gap-3 mt-1 opacity-0 group-hover:opacity-100 transition-all duration-300',
+                        isUser && 'flex-row-reverse'
+                    )}>
                         <button
                             onClick={handleCopy}
-                            className='text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-200 transition-colors cursor-pointer'
+                            className='text-[10px] font-bold text-white/20 hover:text-white px-2 py-1 rounded-lg transition-colors uppercase tracking-widest'
                         >
-                            <Copy className='w-3 h-3' />
-                            {copied ? 'Copied!' : 'Copy'}
+                            {copied ? 'Captured' : 'Copy'}
                         </button>
                     </div>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 }

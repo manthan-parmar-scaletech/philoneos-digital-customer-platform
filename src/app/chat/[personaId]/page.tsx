@@ -129,7 +129,8 @@ export default function ChatPage() {
         userInput?: string,
     ) => {
         if (!persona) return;
-
+console.log(intent)
+console.log(userInput)
         setIsCreatingConversation(true);
 
         try {
@@ -142,7 +143,9 @@ export default function ChatPage() {
                 }
             } else if (userInput) {
                 const prompt = generatePromptFromIntent(intent, userInput);
+                console.log(prompt)
                 const newConversation = await createConversation(prompt);
+                console.log(newConversation)
                 if (newConversation) {
                     setPrefilledMessage(prompt);
                     setSelectedConversation(newConversation);
@@ -161,22 +164,22 @@ export default function ChatPage() {
     if (!persona || !company) {
         if (loading) {
             return (
-                <div className='h-screen bg-white flex items-center justify-center overflow-hidden'>
+                <div className='h-screen bg-[#060606] flex items-center justify-center overflow-hidden'>
                     <div className='text-center animate-fade-in'>
-                        <div className='inline-flex items-center justify-center w-16 h-16 bg-[var(--sidebar-bg)] rounded-lg shadow-lg mb-8'>
-                            <PenTool className='w-8 h-8 text-white' />
+                        <div className='inline-flex items-center justify-center w-16 h-16 bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl mb-8'>
+                            <PenTool className='w-8 h-8 text-primary-400' />
                         </div>
                         <div className='flex items-center justify-center gap-2'>
                             <div
-                                className='w-2 h-2 bg-[var(--sidebar-bg)] rounded-full animate-bounce'
+                                className='w-2 h-2 bg-primary-500 rounded-full animate-bounce shadow-[0_0_10px_rgba(124,58,237,0.5)]'
                                 style={{ animationDelay: '0ms' }}
                             ></div>
                             <div
-                                className='w-2 h-2 bg-[var(--sidebar-bg)] rounded-full animate-bounce'
+                                className='w-2 h-2 bg-primary-500 rounded-full animate-bounce shadow-[0_0_10px_rgba(124,58,237,0.5)]'
                                 style={{ animationDelay: '150ms' }}
                             ></div>
                             <div
-                                className='w-2 h-2 bg-[var(--sidebar-bg)] rounded-full animate-bounce'
+                                className='w-2 h-2 bg-primary-500 rounded-full animate-bounce shadow-[0_0_10px_rgba(124,58,237,0.5)]'
                                 style={{ animationDelay: '300ms' }}
                             ></div>
                         </div>
@@ -186,8 +189,8 @@ export default function ChatPage() {
         }
 
         return (
-            <div className='h-screen bg-white flex items-center justify-center overflow-hidden'>
-                <div className='text-lg'>Persona not found</div>
+            <div className='h-screen bg-[#060606] flex items-center justify-center overflow-hidden'>
+                <div className='text-lg text-white/50'>Persona not found</div>
             </div>
         );
     }
@@ -197,7 +200,7 @@ export default function ChatPage() {
     };
 
     return (
-        <div className='h-screen bg-white animate-fade-in overflow-hidden'>
+        <div className='h-screen bg-[#060606] animate-fade-in overflow-hidden'>
             {/* Guided Entry Modal */}
             {showGuidedEntry && (
                 <GuidedEntryModal

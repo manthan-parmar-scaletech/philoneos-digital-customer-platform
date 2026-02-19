@@ -71,7 +71,7 @@ export default function LayoutWrapper({
     }
 
     return (
-        <div className='flex h-screen overflow-hidden'>
+        <div className='flex h-screen overflow-hidden bg-[#060606]'>
             <Sidebar
                 companyName={company?.name}
                 companyLogo={company?.logo_url}
@@ -79,7 +79,7 @@ export default function LayoutWrapper({
                 onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
             />
             <main
-                className={`flex-1 overflow-auto transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-60'}`}
+                className={`flex-1 overflow-y-auto overflow-x-hidden transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'} bg-[#0a0a0a] relative`}
             >
                 {children}
             </main>

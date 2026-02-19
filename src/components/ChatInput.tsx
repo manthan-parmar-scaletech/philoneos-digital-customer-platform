@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Send, FileText, Sparkles } from 'lucide-react';
 import { Button } from './ui/Button';
+import clsx from 'clsx';
 
 interface ChatInputProps {
     onSend: (message: string) => void;
@@ -67,14 +68,38 @@ export default function ChatInput({
     return (
         <form
             onSubmit={handleSubmit}
-            className='border-t border-gray-200 bg-white'
+            className='bg-transparent relative'
         >
-            <div className=' mx-auto p-4'>
-                <div className='flex items-center justify-between'>
+            <div className='max-w-4xl mx-auto'>
+                <div className='relative group/input'>
+                    {/* Shadow & Glow Effects */}
+                    <div className='absolute -inset-1 bg-gradient-to-r from-primary-500/10 via-indigo-500/10 to-primary-500/10 rounded-[2.5rem] blur-xl opacity-0 group-focus-within/input:opacity-100 transition-opacity duration-1000' />
+                    
                     <div
-                        style={{ width: 'calc(100% - 210px)' }}
-                        className='flex items-end gap-3 bg-white border-2 border-gray-200 rounded-xl shadow-sm focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:shadow-md transition-all duration-200'
+                        className='relative flex items-end gap-2 bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-2 focus-within:bg-white/[0.06] focus-within:border-white/20 transition-all duration-500 shadow-2xl'
                     >
+                        {/* Summary Button Integrated */}
+                        {summaryButton?.show && (
+                            <div>
+                                <button
+                                    type='button'
+                                    onClick={summaryButton.onClick}
+                                    disabled={summaryButton.disabled}
+                                    className={clsx(
+                                        'w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer duration-500 border',
+                                        summaryButton.disabled
+                                            ? 'text-white/10 border-white/5 cursor-not-allowed'
+                                            : summaryButton.isViewMode
+                                                ? 'bg-primary-500 text-white border-primary-400/50 shadow-lg shadow-primary-500/20'
+                                                : 'bg-white/[0.05] text-primary-400 border-white/10 hover:bg-white/[0.1] hover:text-primary-300'
+                                    )}
+                                    title={summaryButton.disabled ? 'Need 3+ messages' : summaryButton.label}
+                                >
+                                    {summaryButton.isViewMode ? <FileText className='w-5 h-5' /> : <Sparkles className='w-5 h-5' />}
+                                </button>
+                            </div>
+                        )}
+
                         <textarea
                             ref={textareaRef}
                             value={message}
@@ -83,71 +108,31 @@ export default function ChatInput({
                             placeholder={placeholder}
                             disabled={disabled}
                             rows={1}
-                            className='flex-1 px-4 py-3 bg-transparent border-none outline-none resize-none max-h-40 text-gray-900 placeholder-gray-500 disabled:opacity-50 disabled:cursor-not-allowed'
+                            className='flex-1 px-4 py-3 bg-transparent border-none focus:ring-0 focus-visible:shadow-none focus-visible:outline-none focus-visible:border-0 outline-none resize-none max-h-40 text-white text-[15px] font-medium placeholder-white/20 disabled:opacity-50 disabled:cursor-not-allowed custom-scrollbar leading-relaxed'
                         />
-                        <div className='pr-3 pb-3'>
+
+                        <div className=' flex items-center gap-2'>
                             <Button
                                 type='submit'
                                 variant='primary'
                                 size='sm'
                                 disabled={disabled || !message.trim()}
-                                className='rounded-lg shadow-sm hover:shadow-md'
+                                className='w-12 h-12 rounded-2xl text-[#060606] shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 border border-white/20'
                             >
-                                <Send className='w-4 h-4' />
+                                <Send className='w-5 h-5' />
                             </Button>
                         </div>
                     </div>
-                    <div className='flex items-center gap-3'>
-                        {summaryButton?.show && (
-                            <button
-                                type='button'
-                                onClick={summaryButton.onClick}
-                                disabled={summaryButton.disabled}
-                                className={`
-                                    group relative flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-semibold text-sm
-                                    transition-all duration-300 transform
-                                    ${
-                                        summaryButton.disabled
-                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                            : summaryButton.isViewMode
-                                              ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/40 hover:scale-105 active:scale-95 cursor-pointer'
-                                              : 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-105 active:scale-95 animate-pulse cursor-pointer'
-                                    }
-                                `}
-                                title={
-                                    summaryButton.disabled
-                                        ? 'Need at least 3 messages'
-                                        : summaryButton.label
-                                }
-                            >
-                                {!summaryButton.disabled && (
-                                    <div className='absolute inset-0 rounded-xl bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300' />
-                                )}
-                                <div
-                                    className={`relative ${summaryButton.isViewMode ? 'group-hover:rotate-12 transition-transform duration-300' : 'group-hover:scale-110 transition-transform duration-300'}`}
-                                >
-                                    {summaryButton.isViewMode ? (
-                                        <FileText className='w-5 h-5' />
-                                    ) : (
-                                        <Sparkles className='w-5 h-5' />
-                                    )}
-                                </div>
-                                <span className='relative'>
-                                    {summaryButton.label}
-                                </span>
-                                {summaryButton.isViewMode &&
-                                    !summaryButton.disabled && (
-                                        <div className='relative w-2 h-2 bg-green-400 rounded-full animate-pulse'>
-                                            <div className='absolute inset-0 bg-green-400 rounded-full animate-ping' />
-                                        </div>
-                                    )}
-                            </button>
-                        )}
-                    </div>
                 </div>
-                <p className='text-xs text-gray-400 mt-2 text-center'>
-                    Press Enter to send, Shift+Enter for new line
-                </p>
+
+                {/* Footer Hints */}
+                <div className='flex items-center justify-center gap-6 mt-4'>
+                    <div className='h-px w-12 bg-gradient-to-r from-transparent to-white/5' />
+                    <p className='text-[10px] text-white/20 font-bold uppercase tracking-[0.25em]'>
+                        Command Bar Active
+                    </p>
+                    <div className='h-px w-12 bg-gradient-to-l from-transparent to-white/5' />
+                </div>
             </div>
         </form>
     );

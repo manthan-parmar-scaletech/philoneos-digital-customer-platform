@@ -1,9 +1,12 @@
+'use client';
+
 import type { Persona } from '@/types';
 import { MessageCircle, User } from 'lucide-react';
-import { Card } from './ui/Card';
 import { Avatar } from './ui/Avatar';
-import { Button } from './ui/Button';
+import { MagicButton } from './ui/MagicButton';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+import { useScrollAnimation } from '@/lib/animations';
 import {
     getAvatarUrl,
     getAvatarType,
@@ -20,6 +23,7 @@ export default function PersonaCard({
     primaryColor,
 }: PersonaCardProps) {
     const router = useRouter();
+    const { ref, controls } = useScrollAnimation(0.2);
 
     const handleStartConversation = () => {
         router.push(`/chat/${persona.id}`);
@@ -49,90 +53,92 @@ export default function PersonaCard({
     const avatarSrc = persona.avatar_url || generatedAvatarUrl;
 
     return (
-        <Card
-            hover
-            padding='none'
-            className='overflow-hidden group cursor-pointer transition-all duration-300 hover:scale-[1.02] animate-fade-in'
-            onClick={handleStartConversation}
+        <motion.div
+            ref={ref}
+            initial='hidden'
+            animate={controls}
+            variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+            }}
         >
-            {/* Header with glass morphism */}
-            <div className='h-24 relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900'>
-                {/* Glass morphism overlay */}
-                <div className='absolute inset-0 bg-gradient-to-br from-blue-500/20 via-purple-500/10 to-blue-600/20 backdrop-blur-sm'></div>
+            <div
+                className='overflow-hidden group cursor-pointer transition-all duration-300 bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl hover:border-primary-500/30 hover:bg-white/[0.05] hover:shadow-[0_0_40px_rgba(124,58,237,0.1)] h-full flex flex-col'
+                onClick={handleStartConversation}
+            >
+                {/* Modern Header with Gradient */}
+                <div className='h-20 bg-gradient-to-br from-primary-600/20 to-violet-600/20 relative overflow-hidden'>
+                    <div className='absolute inset-0 bg-[url("https://grainy-gradients.vercel.app/noise.svg")] opacity-10 mix-blend-overlay' />
+                    <motion.div 
+                        whileHover={{ scale: 1.2, rotate: 10 }}
+                        className='absolute -right-4 -top-4 w-20 h-20 bg-primary-500/10 rounded-full blur-2xl' 
+                    />
+                </div>
 
-                {/* Animated gradient orbs */}
-                <div className='absolute -top-10 -right-10 w-32 h-32 bg-blue-500/30 rounded-full blur-2xl'></div>
-                <div className='absolute -bottom-10 -left-10 w-32 h-32 bg-purple-500/20 rounded-full blur-2xl'></div>
+                {/* Content */}
+                <div className='p-5 flex-1 flex flex-col'>
+                    {/* Avatar */}
+                    <div className='flex justify-center -mt-12 mb-4'>
+                        <div className='bg-[#0a0a0a] p-1.5 rounded-2xl shadow-2xl border border-white/10'>
+                            <Avatar
+                                src={avatarSrc}
+                                alt={`${personaData.occupation || persona.name} - ${avatarType}`}
+                                size='lg'
+                                fallback={avatarEmoji}
+                                color={primaryColor || '#7c3aed'}
+                                className='border-4 border-[#0a0a0a] rounded-xl'
+                            />
+                        </div>
+                    </div>
 
-                {/* Subtle pattern overlay */}
-                <div
-                    className='absolute inset-0 opacity-5'
-                    style={{
-                        backgroundImage:
-                            'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
-                        backgroundSize: '24px 24px',
-                    }}
-                ></div>
-            </div>
+                    {/* Name and Title */}
+                    <div className='mb-2 text-center'>
+                        <h3 className='text-lg font-bold text-white tracking-tight group-hover:text-primary-400 transition-colors'>
+                            {personaData.occupation}
+                        </h3>
+                    </div>
 
-            {/* Content */}
-            <div className='p-6 -mt-10 relative'>
-                {/* Avatar */}
-                <div className='mb-4'>
-                    <div className='inline-block p-2 bg-gray-900 rounded-full'>
-                        <Avatar
-                            src={avatarSrc}
-                            alt={`${personaData.occupation || persona.name} - ${avatarType}`}
-                            size='xl'
-                            fallback={avatarEmoji}
-                            color={primaryColor || '#3b82f6'}
-                            className='ring-4 ring-white shadow-lg'
-                        />
+                    {/* Description */}
+                    <p className='text-gray-400 text-xs mb-4 line-clamp-3 leading-relaxed text-center'>
+                        {persona.short_description}
+                    </p>
+
+                    {/* Meta Info */}
+                    <div className='flex items-center justify-center gap-2 mb-6 text-[10px]'>
+                        {personaData.age && (
+                            <div className='flex items-center gap-1.5 px-3 py-1 bg-white/[0.03] border border-white/5 rounded-xl text-gray-300'>
+                                <User className='w-3 h-3 text-primary-400' />
+                                <span className='font-semibold'>
+                                    {personaData.age}
+                                </span>
+                            </div>
+                        )}
+                        {personaData.location && (
+                            <div className='flex items-center gap-1.5 px-3 py-1 bg-white/[0.03] border border-white/5 rounded-xl text-gray-300'>
+                                <span className='text-[10px]'>📍</span>
+                                <span className='font-semibold'>
+                                    {personaData.location}
+                                </span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Action Button */}
+                    <div className='mt-auto pt-2'>
+                        <MagicButton
+                            variant='secondary'
+                            className='w-full py-2 rounded-xl bg-white/[0.03] hover:bg-primary-600 border-white/10 hover:border-primary-500/50 group/btn'
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleStartConversation();
+                            }}
+                        >
+                            <MessageCircle className='w-5 h-5 group-hover/btn:scale-110 transition-transform' />
+                            <span>Chat Now</span>
+                        </MagicButton>
                     </div>
                 </div>
-
-                {/* Name and Title */}
-                <div className='mb-3'>
-                    <h3 className='text-xl font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors'>
-                        {personaData.occupation}
-                    </h3>
-                </div>
-
-                {/* Description */}
-                <p className='text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed'>
-                    {persona.short_description}
-                </p>
-
-                {/* Meta Info */}
-                <div className='flex items-center gap-4 mb-4 text-xs text-gray-500'>
-                    {personaData.age && (
-                        <div className='flex items-center gap-1'>
-                            <User className='w-3 h-3' />
-                            <span>{personaData.age} years</span>
-                        </div>
-                    )}
-                    {personaData.location && (
-                        <div className='flex items-center gap-1'>
-                            <span>📍</span>
-                            <span>{personaData.location}</span>
-                        </div>
-                    )}
-                </div>
-
-                {/* Action Button */}
-                <Button
-                    variant='primary'
-                    size='md'
-                    className='w-full group-hover:shadow-md transition-shadow'
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        handleStartConversation();
-                    }}
-                >
-                    <MessageCircle className='w-4 h-4 mr-2' />
-                    Start Conversation
-                </Button>
             </div>
-        </Card>
+        </motion.div>
     );
 }

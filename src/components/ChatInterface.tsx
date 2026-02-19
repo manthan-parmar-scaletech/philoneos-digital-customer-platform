@@ -7,7 +7,7 @@ import type {
     ConversationSummary,
     SummaryData,
 } from '@/types';
-import { MessageSquare, ArrowLeft } from 'lucide-react';
+import { MessageSquare, ArrowLeft, Sparkles } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import MessageBubble from './MessageBubble';
 import TypingIndicator from './TypingIndicator';
@@ -16,6 +16,8 @@ import PersonaDetailsPanel from './PersonaDetailsPanel';
 import ConversationHistoryPanel from './ConversationHistoryPanel';
 import ConversationSummaryModal from './ConversationSummaryModal';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
+import { staggerContainer, fadeInUp, fadeIn } from '@/lib/animations';
 
 interface ChatInterfaceProps {
     persona: Persona;
@@ -60,8 +62,11 @@ export default function ChatInterface({
     };
 
     useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
+        const timer = setTimeout(() => {
+            scrollToBottom();
+        }, 200);
+        return () => clearTimeout(timer);
+    }, [messages, isLoading, selectedConversation]);
 
     useEffect(() => {
         if (selectedConversation) {
@@ -249,174 +254,170 @@ export default function ChatInterface({
     };
 
     return (
-        <div className='flex h-screen bg-white'>
-            {/* Left Panel - Conversation History */}
-            <ConversationHistoryPanel
-                conversations={conversations}
-                selectedConversation={selectedConversation}
-                onConversationSelect={onConversationSelect}
-                onNewConversation={onNewConversation}
-            />
+        <div className='flex h-screen bg-[#060606] text-white relative overflow-hidden font-sans font-medium'>
+            {/* Mesh Gradient Background Elements - Isolated from events */}
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden container-background">
+                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary-600/10 blur-[120px] rounded-full animate-pulse" style={{ animationDuration: '8s' }} />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-600/10 blur-[120px] rounded-full animate-pulse" style={{ animationDuration: '10s', animationDelay: '2s' }} />
+                <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-emerald-600/5 blur-[100px] rounded-full opacity-50" />
+            </div>
+            
+            <div className="flex w-full h-full relative z-10 backdrop-blur-[1px]">
+                {/* Left Panel - Conversation History */}
+                <ConversationHistoryPanel
+                    conversations={conversations}
+                    selectedConversation={selectedConversation}
+                    onConversationSelect={onConversationSelect}
+                    onNewConversation={onNewConversation}
+                />
 
-            {/* Main Chat Area */}
-            <div className='flex-1 flex flex-col h-screen'>
-                {/* Header */}
-                <div className='border-b border-gray-200 bg-white px-6 py-4 shadow-sm'>
-                    <div className='flex items-center justify-between'>
-                        <div className='flex items-center gap-4'>
-                            <button
-                                onClick={() => router.push('/dashboard')}
-                                className='flex items-center gap-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-2 py-1.5 rounded-lg transition-colors cursor-pointer'
-                            >
-                                <ArrowLeft className='w-4 h-4' />
-                                <span className='font-medium text-sm'>
-                                    Back
-                                </span>
-                            </button>
-                            <div className='h-6 w-px bg-gray-300'></div>
-                            <div className='flex items-center gap-3'>
-                                <div>
-                                    <div className='flex items-center gap-2'>
-                                        <h1 className='text-base font-bold text-gray-900'>
-                                            {personaData.occupation}
+                {/* Main Chat Area */}
+                <div className='flex-1 flex flex-col h-dvh justify-start relative overflow-hidden bg-white/[0.01]'>
+                    {/* Header */}
+                    <div className='z-20 border-b border-white/[0.05] bg-white/[0.01] backdrop-blur-3xlshadow-[0_8px_32px_rgba(0,0,0,0.4)] px-8 py-5'>
+                        <div className='max-w-5xl mx-auto flex items-center justify-between'>
+                            <div className='flex items-center gap-6'>
+                                <button
+                                    onClick={() => router.push('/dashboard')}
+                                    className='p-2.5 bg-white/[0.03] hover:bg-white/[0.08] rounded-2xl border border-white/5 transition-all duration-300 group'
+                                >
+                                    <ArrowLeft className='w-5 h-5 text-white/40 group-hover:text-white transition-colors' />
+                                </button>
+                                <div className='h-10 w-px bg-white/5' />
+                                <div className='flex flex-col'>
+                                    <div className='flex items-center gap-3'>
+                                        <h1 className='text-xl font-bold tracking-tight text-white leading-none'>
+                                            {persona?.name || 'Loading...'}
                                         </h1>
-                                        <span className='px-2 py-0.5 bg-blue-100 rounded-md text-xs font-medium text-blue-700'>
-                                            AI Customer
-                                        </span>
+                                        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-primary-500/10 border border-primary-400/20 rounded-lg shadow-[0_0_15px_rgba(124,58,237,0.1)]">
+                                            <div className="w-1.5 h-1.5 bg-primary-400 rounded-full animate-pulse" />
+                                            <span className="text-[10px] font-bold text-primary-400 uppercase tracking-[0.15em]">AI Customer</span>
+                                        </div>
                                     </div>
-                                    <p className='text-xs text-gray-600 mt-0.5'>
-                                        {persona.short_description.substring(
-                                            0,
-                                            60,
-                                        )}
-                                        ...
+                                    <p className='text-[13px] text-white/40 font-medium truncate max-w-md mt-1.5'>
+                                        {persona?.short_description}
                                     </p>
                                 </div>
                             </div>
-                        </div>
-                        <div className='hidden md:flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-lg border border-green-200'>
-                            <div className='w-2 h-2 bg-green-500 rounded-full animate-pulse'></div>
-                            <span className='text-xs font-medium text-green-700'>
-                                Active
-                            </span>
+                            <div className='flex items-center gap-3 px-4 py-2 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl'>
+                                <div className='w-2 h-2 bg-emerald-500 rounded-full shadow-[0_0_12px_rgba(16,185,129,0.5)]' />
+                                <span className='text-[11px] font-bold text-emerald-400 uppercase tracking-[0.1em]'>
+                                    Active Session
+                                </span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                {selectedConversation ? (
-                    <>
-                        {/* Messages */}
-                        <div
-                            className='flex-1 overflow-y-auto'
-                            style={{ height: 'calc(100vh - 180px)' }}
-                        >
-                            {messages.length === 0 ? (
-                                <div className='h-full flex items-center justify-center'>
-                                    <div className='text-center max-w-md px-4'>
-                                        <div className='w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4'>
-                                            <MessageSquare className='w-8 h-8 text-blue-600' />
+
+                    {/* Messages Area */}
+                    <div className='max-h-[calc(100vh-12rem)] overflow-y-auto relative custom-scrollbar flex flex-col pt-4'>
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-full bg-gradient-to-b from-primary-500/[0.03] via-transparent to-transparent pointer-events-none" />
+                        
+                        {!selectedConversation && messages.length === 0 ? (
+                            <div className='flex-1 flex items-center justify-center p-6 relative'>
+                                <div className="text-center group">
+                                    <div className='relative w-28 h-28 mx-auto mb-8'>
+                                        <div className='absolute inset-0 bg-primary-500/20 blur-[50px] rounded-full group-hover:bg-primary-500/30 transition-all duration-1000' />
+                                        <div className='relative w-full h-full bg-white/[0.03] backdrop-blur-3xl rounded-[2.5rem] flex items-center justify-center shadow-2xl border border-white/10 group-hover:border-white/20 transition-all duration-500'>
+                                            <MessageSquare className='w-12 h-12 text-primary-400' />
                                         </div>
-                                        <h3 className='text-xl font-semibold text-gray-900 mb-2'>
-                                            Start a conversation with{' '}
-                                            {personaData.occupation}
-                                        </h3>
-                                        <p className='text-gray-600 mb-4'>
-                                            {persona.short_description}
-                                        </p>
-                                        <p className='text-sm text-gray-500'>
-                                            Ask questions, test messaging, or
-                                            explore their perspective
-                                        </p>
                                     </div>
+                                    <h2 className='text-3xl font-bold text-white mb-4 tracking-tight'>
+                                        Digital Dialogue
+                                    </h2>
+                                    <p className='text-white/40 max-w-sm mx-auto text-[15px] leading-relaxed font-medium'>
+                                        Explore deep consumer insights through high-fidelity AI interactions.
+                                    </p>
                                 </div>
-                            ) : (
-                                <div>
-                                    {messages.map((message, index) => (
-                                        <MessageBubble
-                                            key={message.id}
-                                            role={message.role}
-                                            content={message.content}
-                                            timestamp={message.created_at}
-                                            personaName={personaData.occupation}
-                                            personaAvatar={persona.avatar_url}
-                                            personaColor={company.primary_color}
-                                            isTyping={
-                                                message.role === 'assistant' &&
-                                                message.id === typingMessageId
-                                            }
-                                        />
-                                    ))}
-                                    {isLoading && (
-                                        <div className='bg-gray-50 py-4'>
-                                            <div className='max-w-3xl mx-auto px-4'>
+                            </div>
+                        ) : (
+                            <div className='max-w-5xl mx-auto w-full flex-1 px-4 relative z-20'>
+                                <AnimatePresence mode="popLayout">
+                                    <motion.div 
+                                        key={selectedConversation?.id || 'new'}
+                                        initial={{ opacity: 1 }}
+                                        animate={{ opacity: 1 }}
+                                        className="flex flex-col pt-4 min-h-full pb-[80px]"
+                                    >
+                                        {messages.map((m) => (
+                                            <MessageBubble
+                                                key={m.id}
+                                                role={m.role}
+                                                content={m.content}
+                                                timestamp={m.created_at}
+                                                personaName={persona?.name}
+                                                personaAvatar={persona?.avatar_url}
+                                                personaColor={company.primary_color}
+                                                isTyping={m.id === typingMessageId}
+                                            />
+                                        ))}
+                                        {isLoading && (
+                                            <motion.div 
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                className="px-6 py-4"
+                                            >
                                                 <TypingIndicator />
-                                            </div>
-                                        </div>
-                                    )}
-                                    <div ref={messagesEndRef} />
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Input */}
-                        <ChatInput
-                            onSend={handleSendMessage}
-                            disabled={isLoading}
-                            placeholder={`Message ${personaData.occupation}...`}
-                            value={prefilledMessage}
-                            onChange={onPrefilledMessageChange}
-                            summaryButton={{
-                                show: messages.length > 0,
-                                disabled:
-                                    messages.filter((m) => m.role === 'user')
-                                        .length < 3,
-                                label:
-                                    summaryData &&
-                                    summaryData.message_count_at_generation ===
-                                        messages.length
-                                        ? 'View Summary'
-                                        : 'Generate Summary',
-                                onClick:
-                                    summaryData &&
-                                    summaryData.message_count_at_generation ===
-                                        messages.length
-                                        ? handleViewSummary
-                                        : handleGenerateSummary,
-                                isViewMode:
-                                    summaryData !== null &&
-                                    summaryData.message_count_at_generation ===
-                                        messages.length,
-                            }}
-                        />
-                    </>
-                ) : (
-                    <div className='h-full flex items-center justify-center'>
-                        <div className='text-center max-w-md px-4'>
-                            <MessageSquare className='w-16 h-16 text-gray-300 mx-auto mb-4' />
-                            <h3 className='text-xl font-semibold text-gray-900 mb-2'>
-                                No conversation selected
-                            </h3>
-                            <p className='text-gray-600 mb-6'>
-                                Start a new conversation from the panel on the
-                                left
-                            </p>
-                        </div>
+                                            </motion.div>
+                                        )}
+                                        <div ref={messagesEndRef} className="h-1" />
+                                    </motion.div>
+                                </AnimatePresence>
+                            </div>
+                        )}
                     </div>
-                )}
+
+                    {/* Chat Input Area */}
+                    <div className='absolute bottom-0 px-6 left-0 right-0 z-30 pointer-events-none'>
+                        <div className="max-w-4xl mx-auto relative z-10 pointer-events-auto">
+                            <ChatInput
+                                onSend={handleSendMessage}
+                                disabled={isLoading}
+                                value={prefilledMessage}
+                                onChange={onPrefilledMessageChange}
+                                placeholder={
+                                    persona
+                                        ? `Message ${persona.name}...`
+                                        : 'Type your message...'
+                                }
+                                summaryButton={{
+                                    show: messages.length > 0,
+                                    disabled:
+                                        messages.filter((m) => m.role === 'user')
+                                            .length < 3,
+                                    label:
+                                        summaryData?.message_count_at_generation ===
+                                            messages.length
+                                            ? 'View Summary'
+                                            : 'Generate Summary',
+                                    onClick:
+                                        summaryData?.message_count_at_generation ===
+                                            messages.length
+                                            ? handleViewSummary
+                                            : handleGenerateSummary,
+                                    isViewMode:
+                                        summaryData !== null &&
+                                        summaryData?.message_count_at_generation ===
+                                            messages.length,
+                                }}
+                            />
+                        </div>
+                    </div> 
+                    {/* Summary Modal */}
+                    <ConversationSummaryModal
+                        isOpen={showSummaryModal}
+                        onClose={() => setShowSummaryModal(false)}
+                        summary={summaryData?.summary_json || null}
+                        isLoading={isSummaryLoading}
+                    />
+
+                </div>
+
+                {/* Right Panel - Persona Details */}
+                <PersonaDetailsPanel
+                    persona={persona}
+                    primaryColor={company.primary_color}
+                />
             </div>
-
-            {/* Right Panel - Persona Details */}
-            <PersonaDetailsPanel
-                persona={persona}
-                primaryColor={company.primary_color}
-            />
-
-            {/* Summary Modal */}
-            <ConversationSummaryModal
-                isOpen={showSummaryModal}
-                onClose={() => setShowSummaryModal(false)}
-                summary={summaryData?.summary_json || null}
-                isLoading={isSummaryLoading}
-            />
         </div>
     );
 }

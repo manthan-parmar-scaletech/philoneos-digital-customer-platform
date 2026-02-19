@@ -1,5 +1,7 @@
 import { HTMLAttributes, forwardRef } from 'react';
 import { clsx } from 'clsx';
+import { motion } from 'framer-motion';
+import { useTilt } from '@/lib/animations';
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
     hover?: boolean;
@@ -8,6 +10,8 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
     ({ children, className, hover = false, padding = 'md', ...props }, ref) => {
+        const { ref: tiltRef, tilt, tiltProps } = useTilt(5);
+
         const paddings = {
             none: '',
             sm: 'p-4',
@@ -16,20 +20,51 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
         };
 
         return (
-            <div
-                ref={ref}
+            <motion.div
+                ref={(node) => {
+                    tiltRef.current = node;
+                    if (typeof ref === 'function') {
+                        ref(node);
+                    } else if (ref) {
+                        ref.current = node;
+                    }
+                }}
                 className={clsx(
-                    'bg-white rounded-xl border border-gray-200/60 shadow-sm transition-all duration-300',
-                    'backdrop-blur-sm',
-                    hover &&
-                        'hover:shadow-lg hover:border-gray-300 hover:shadow-blue-500/5',
+                    'bg-white rounded-2xl border border-slate-200 shadow-md transition-all duration-300',
+                    'relative overflow-hidden',
                     paddings[padding],
                     className,
                 )}
-                {...props}
+                style={{
+                    transformStyle: 'preserve-3d',
+                }}
+                animate={
+                    hover
+                        ? {
+                              rotateX: tilt.rotateX,
+                              rotateY: tilt.rotateY,
+                          }
+                        : {}
+                }
+                whileHover={
+                    hover
+                        ? {
+                              scale: 1.02,
+                              y: -4,
+                              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+                          }
+                        : {}
+                }
+                transition={{
+                    type: 'spring',
+                    stiffness: 300,
+                    damping: 20,
+                }}
+                onMouseMove={hover ? tiltProps.onMouseMove : undefined}
+                onMouseLeave={hover ? tiltProps.onMouseLeave : undefined}
             >
                 {children}
-            </div>
+            </motion.div>
         );
     },
 );

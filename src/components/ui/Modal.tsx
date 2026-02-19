@@ -1,6 +1,8 @@
 import { HTMLAttributes, forwardRef, useEffect } from 'react';
 import { clsx } from 'clsx';
 import { X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { modalBackdrop, modalContent } from '@/lib/animations';
 
 interface ModalProps extends HTMLAttributes<HTMLDivElement> {
     isOpen: boolean;
@@ -44,8 +46,6 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
             };
         }, [isOpen, onClose]);
 
-        if (!isOpen) return null;
-
         const sizes = {
             sm: 'max-w-md',
             md: 'max-w-lg',
@@ -53,61 +53,74 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
         };
 
         return (
-            <div
-                className='fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in'
-                onClick={onClose}
-            >
-                {/* Backdrop */}
-                <div className='absolute inset-0 bg-black/50 backdrop-blur-sm' />
+            <AnimatePresence>
+                {isOpen && (
+                    <div className='fixed inset-0 z-50 flex items-center justify-center p-4'>
+                        {/* Backdrop */}
+                        <motion.div
+                            variants={modalBackdrop}
+                            initial='hidden'
+                            animate='visible'
+                            exit='exit'
+                            className='absolute inset-0 bg-black/60 backdrop-blur-xl'
+                            onClick={onClose}
+                        />
 
-                {/* Modal */}
-                <div
-                    ref={ref}
-                    className={clsx(
-                        'relative bg-white rounded-lg shadow-2xl w-full animate-slide-up max-h-[90vh] flex flex-col',
-                        sizes[size],
-                        className,
-                    )}
-                    onClick={(e) => e.stopPropagation()}
-                    role='dialog'
-                    aria-modal='true'
-                    aria-labelledby={title ? 'modal-title' : undefined}
-                    {...props}
-                >
-                    {/* Header */}
-                    {(title || showCloseButton) && (
-                        <div className='flex items-center justify-between p-6 border-b border-gray-200'>
-                            {title && (
-                                <h2
-                                    id='modal-title'
-                                    className='text-xl font-semibold text-gray-900'
-                                >
-                                    {title}
-                                </h2>
+                        {/* Modal */}
+                        <motion.div
+                            ref={ref}
+                            variants={modalContent}
+                            initial='hidden'
+                            animate='visible'
+                            exit='exit'
+                            className={clsx(
+                                'relative bg-[#0a0a0a]/90 backdrop-blur-2xl rounded-2xl shadow-2xl w-full max-h-[90vh] flex flex-col border border-white/10',
+                                sizes[size],
+                                className,
                             )}
-                            {showCloseButton && (
-                                <button
-                                    onClick={onClose}
-                                    className='ml-auto text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-lg hover:bg-gray-100 cursor-pointer'
-                                    aria-label='Close modal'
-                                >
-                                    <X className='w-5 h-5' />
-                                </button>
+                            onClick={(e) => e.stopPropagation()}
+                            role='dialog'
+                            aria-modal='true'
+                            aria-labelledby={title ? 'modal-title' : undefined}
+                        >
+                            {/* Header */}
+                            {(title || showCloseButton) && (
+                                <div className='flex items-center justify-between p-5 border-b border-white/10 relative z-10'>
+                                    {title && (
+                                        <h2
+                                            id='modal-title'
+                                            className='text-xl font-bold text-white tracking-tight'
+                                        >
+                                            {title}
+                                        </h2>
+                                    )}
+                                    {showCloseButton && (
+                                        <button
+                                            onClick={onClose}
+                                            className='ml-auto text-gray-500 hover:text-white transition-all duration-200 p-2 rounded-xl hover:bg-white/5 cursor-pointer'
+                                            aria-label='Close modal'
+                                        >
+                                            <X className='w-5 h-5' />
+                                        </button>
+                                    )}
+                                </div>
                             )}
-                        </div>
-                    )}
 
-                    {/* Content */}
-                    <div className='p-6 overflow-y-auto flex-1'>{children}</div>
+                            {/* Content */}
+                            <div className='p-5 overflow-y-auto flex-1 relative z-10'>
+                                {children}
+                            </div>
 
-                    {/* Footer */}
-                    {footer && (
-                        <div className='flex items-center justify-end gap-3 p-6 border-t border-gray-200'>
-                            {footer}
-                        </div>
-                    )}
-                </div>
-            </div>
+                            {/* Footer */}
+                            {footer && (
+                                <div className='flex items-center justify-end gap-3 p-5 border-t border-white/5 relative z-10'>
+                                    {footer}
+                                </div>
+                            )}
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         );
     },
 );

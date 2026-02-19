@@ -1,5 +1,7 @@
 import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { clsx } from 'clsx';
+import { motion } from 'framer-motion';
+import { useRipple, useMagneticEffect } from '@/lib/animations';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline';
@@ -20,28 +22,30 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         },
         ref,
     ) => {
+        const { ripples, addRipple } = useRipple();
+        const { position, magneticProps } = useMagneticEffect(0.2);
         const baseStyles =
-            'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm relative overflow-hidden';
+            'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 focus:outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden backdrop-blur-lg active:scale-[0.98] min-h-[44px]';
 
         const variants = {
             primary:
-                'bg-gradient-to-br from-slate-800/90 to-slate-900/90 text-white hover:from-slate-700/90 hover:to-slate-800/90 focus:ring-blue-500 shadow-lg hover:shadow-xl border border-slate-700/50 hover:border-slate-600/50 before:absolute before:inset-0 before:bg-gradient-to-br before:from-blue-500/10 before:to-purple-500/10 before:opacity-0 hover:before:opacity-100 before:transition-opacity',
+                'bg-primary-600 text-white hover:shadow-xl hover:shadow-primary-500/30 focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 border border-white/20 hover:scale-[1.02] before:absolute before:inset-0 before:bg-gradient-to-r before:from-white/20 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity',
             secondary:
-                'bg-gradient-to-br from-gray-100/80 to-gray-200/80 text-gray-900 hover:from-gray-200/90 hover:to-gray-300/90 focus:ring-gray-500 border border-gray-300/50 shadow-md hover:shadow-lg backdrop-blur-md',
-            ghost: 'bg-white/5 text-gray-700 hover:bg-white/10 focus:ring-gray-500 backdrop-blur-md border border-gray-200/30 hover:border-gray-300/50',
-            danger: 'bg-gradient-to-br from-red-600/90 to-red-700/90 text-white hover:from-red-500/90 hover:to-red-600/90 focus:ring-red-500 shadow-lg hover:shadow-xl border border-red-500/50 hover:border-red-400/50',
+                'bg-white/10 backdrop-blur-lg text-slate-700 hover:bg-white/20 focus:ring-2 focus:ring-slate-400/50 border border-white/30 shadow-lg hover:shadow-xl hover:scale-[1.02]',
+            ghost: 'bg-white/5 text-slate-600 hover:bg-white/10 focus:ring-2 focus:ring-slate-400/30 backdrop-blur-md border border-slate-200/20 hover:border-slate-300/40 hover:scale-[1.02]',
+            danger: 'bg-gradient-to-r from-red-600 to-rose-600 text-white hover:shadow-xl hover:shadow-red-500/30 focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2 border border-white/20 hover:scale-[1.02]',
             outline:
-                'bg-white/5 border-2 border-gray-300/50 text-gray-700 hover:bg-white/10 hover:border-gray-400/60 focus:ring-gray-500 backdrop-blur-md shadow-sm hover:shadow-md',
+                'bg-transparent border-2 border-slate-300/60 text-slate-700 hover:bg-white/10 hover:border-indigo-400/60 focus:ring-2 focus:ring-indigo-500/30 backdrop-blur-md shadow-sm hover:shadow-md hover:scale-[1.02]',
         };
 
         const sizes = {
-            sm: 'px-3 py-2 text-sm',
-            md: 'px-4 py-2.5 text-sm',
-            lg: 'px-6 py-3.5 text-base',
+            sm: 'px-4 py-2 text-sm',
+            md: 'px-5 py-2.5 text-sm',
+            lg: 'px-7 py-3.5 text-base',
         };
 
         return (
-            <button
+            <motion.button
                 ref={ref}
                 className={clsx(
                     baseStyles,
@@ -50,8 +54,40 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                     className,
                 )}
                 disabled={disabled || isLoading}
-                {...props}
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                    addRipple(e);
+                    props.onClick?.(e);
+                }}
+                animate={{
+                    x: disabled ? 0 : position.x,
+                    y: disabled ? 0 : position.y,
+                }}
+                transition={{
+                    type: 'spring',
+                    stiffness: 150,
+                    damping: 15,
+                    mass: 0.1,
+                }}
+                whileHover={!disabled ? { scale: 1.02 } : {}}
+                whileTap={!disabled ? { scale: 0.98 } : {}}
+                onMouseMove={magneticProps.onMouseMove}
+                onMouseLeave={magneticProps.onMouseLeave}
             >
+                {ripples.map((ripple) => (
+                    <motion.span
+                        key={ripple.id}
+                        className='absolute rounded-full bg-white/30 pointer-events-none'
+                        style={{
+                            left: ripple.x,
+                            top: ripple.y,
+                            width: 0,
+                            height: 0,
+                        }}
+                        initial={{ scale: 0, opacity: 0.5 }}
+                        animate={{ scale: 4, opacity: 0 }}
+                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                    />
+                ))}
                 {isLoading && (
                     <svg
                         className='animate-spin -ml-1 mr-2 h-4 w-4'
@@ -76,7 +112,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                     </svg>
                 )}
                 {children}
-            </button>
+            </motion.button>
         );
     },
 );

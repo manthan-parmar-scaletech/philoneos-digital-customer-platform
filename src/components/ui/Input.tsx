@@ -12,20 +12,21 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         return (
             <div className='w-full'>
                 {label && (
-                    <label className='block text-sm font-medium text-gray-700 mb-1.5'>
+                    <label className='block text-sm font-semibold text-gray-400 mb-1 ml-1'>
                         {label}
                     </label>
                 )}
                 <input
                     ref={ref}
                     className={clsx(
-                        'w-full px-4 py-3 border rounded-lg text-sm transition-all duration-200',
-                        'text-gray-900 placeholder-gray-500 bg-white',
-                        'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:ring-offset-0',
-                        'disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200',
+                        'w-full px-4 py-2.5 border rounded-xl text-sm transition-all duration-300',
+                        'text-white placeholder-gray-600 bg-white/[0.03] backdrop-blur-xl',
+                        'focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500/40 focus:bg-white/[0.05]',
+                        'hover:bg-white/[0.05] hover:border-white/20',
+                        'disabled:bg-white/[0.01] disabled:text-gray-600 disabled:cursor-not-allowed disabled:border-white/5',
                         error
-                            ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                            : 'border-gray-300 hover:border-gray-400',
+                            ? 'border-red-500/50 focus:ring-red-500/40 focus:border-red-500/40'
+                            : 'border-white/10',
                         className,
                     )}
                     {...props}

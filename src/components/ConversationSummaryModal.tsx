@@ -3,13 +3,16 @@ import {
     X,
     Lightbulb,
     AlertCircle,
-    List,
+    Layout,
     Loader2,
     Sparkles,
     Copy,
     Check,
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { staggerContainer, staggerItem, fadeIn, slideUp } from '@/lib/animations';
 import type { SummaryData } from '@/types';
+import clsx from 'clsx';
 
 interface ConversationSummaryModalProps {
     isOpen: boolean;
@@ -19,11 +22,11 @@ interface ConversationSummaryModalProps {
 }
 
 const loadingMessages = [
-    'Analyzing conversation...',
-    'Identifying key insights...',
-    'Extracting objections...',
-    'Preparing executive summary...',
-    'Finalizing report...',
+    'Analyzing conversation structure...',
+    'Identifying unique consumer insights...',
+    'Extracting hidden objections...',
+    'Digitalising executive takeaways...',
+    'Finalizing digital customer report...',
 ];
 
 function LoadingAnimation() {
@@ -38,7 +41,7 @@ function LoadingAnimation() {
             const timeout = setTimeout(() => {
                 setDisplayedText((prev) => prev + message[charIndex]);
                 setCharIndex((prev) => prev + 1);
-            }, 30);
+            }, 25);
             return () => clearTimeout(timeout);
         } else {
             const timeout = setTimeout(() => {
@@ -53,82 +56,59 @@ function LoadingAnimation() {
     }, [currentLoadingMessage, charIndex]);
 
     return (
-        <div className='flex flex-col items-center justify-center py-16 px-6'>
-            {/* Animated gradient background */}
-            <div className='absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 opacity-50' />
+        <div className='flex flex-col items-center justify-center py-20 px-8 relative overflow-hidden'>
+            {/* Background elements */}
+            <div className='absolute inset-0 pointer-events-none'>
+                <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary-500/10 blur-[120px] rounded-full animate-pulse' />
+            </div>
 
-            {/* Main loading content */}
-            <div className='relative z-10 max-w-md w-full'>
-                {/* Spinner with gradient ring */}
-                <div className='relative mb-8 flex justify-center'>
-                    <div className='absolute inset-0 flex items-center justify-center'>
-                        <div className='w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 opacity-20 animate-pulse' />
+            <div className='relative z-10 max-w-md w-full text-center'>
+                <motion.div 
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className='relative mb-12 mx-auto w-24 h-24'
+                >
+                    <div className='absolute inset-0 bg-primary-500/20 blur-2xl rounded-full animate-pulse' />
+                    <div className='relative w-full h-full bg-white/[0.03] backdrop-blur-3xl rounded-[2rem] border border-white/10 flex items-center justify-center shadow-2xl'>
+                        <Loader2 className='w-10 h-10 text-primary-400 animate-spin' />
                     </div>
-                    <div className='relative w-20 h-20 rounded-full bg-white shadow-xl flex items-center justify-center'>
-                        <Loader2
-                            className='w-10 h-10 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 animate-spin'
-                            style={{
-                                WebkitTextFillColor: 'transparent',
-                                backgroundClip: 'text',
-                            }}
-                        />
-                        <div
-                            className='absolute inset-0 rounded-full border-4 border-transparent bg-gradient-to-r from-blue-500 to-indigo-500 opacity-30 animate-spin'
-                            style={{
-                                mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                                maskComposite: 'exclude',
-                                WebkitMask:
-                                    'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                                WebkitMaskComposite: 'xor',
-                            }}
-                        />
+                </motion.div>
+
+                <motion.div 
+                    variants={slideUp}
+                    initial="hidden"
+                    animate="visible"
+                    className='space-y-6'
+                >
+                    <div className='space-y-2'>
+                        <h3 className='text-2xl font-bold text-white tracking-tight'>
+                            Digitalising Insights
+                        </h3>
+                        <p className='text-white/40 font-medium'>
+                            Digital AI is processing your interaction
+                        </p>
                     </div>
-                </div>
 
-                {/* Message card with gradient border */}
-                <div className='relative bg-white rounded-2xl shadow-lg overflow-hidden'>
-                    <div className='absolute inset-0 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 opacity-10' />
-                    <div className='relative p-6'>
-                        <div className='flex items-start gap-3 mb-4'>
-                            <div className='flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-sm'>
-                                <Sparkles className='w-4 h-4 text-white' />
-                            </div>
-                            <div className='flex-1'>
-                                <h3 className='text-sm font-semibold text-gray-900 mb-1'>
-                                    Generating Summary
-                                </h3>
-                                <p className='text-xs text-gray-500'>
-                                    AI is analyzing your conversation
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className='bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100'>
-                            <p className='text-base text-gray-800 font-medium min-h-[24px]'>
-                                {displayedText}
-                                <span className='inline-block w-0.5 h-5 bg-gradient-to-b from-blue-600 to-indigo-600 ml-1 animate-pulse' />
-                            </p>
-                        </div>
-
-                        {/* Progress dots */}
-                        <div className='flex justify-center gap-2 mt-6'>
-                            {[0, 1, 2, 3].map((i) => (
-                                <div
-                                    key={i}
-                                    className='w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500'
-                                    style={{
-                                        animation: `pulse 1.5s ease-in-out ${i * 0.2}s infinite`,
-                                    }}
-                                />
-                            ))}
-                        </div>
+                    <div className='bg-white/[0.02] backdrop-blur-2xl rounded-2xl p-6 border border-white/5 relative group overflow-hidden'>
+                        <div className='absolute inset-0 bg-gradient-to-r from-primary-500/5 via-transparent to-primary-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700' />
+                        <p className='text-lg text-white/90 font-medium min-h-[28px] relative'>
+                            {displayedText}
+                            <span className='inline-block w-1 h-5 bg-primary-500 ml-2 animate-pulse rounded-full align-middle' />
+                        </p>
                     </div>
-                </div>
 
-                {/* Bottom text */}
-                <p className='text-center text-sm text-gray-500 mt-6'>
-                    This usually takes 10-15 seconds
-                </p>
+                    <div className='flex justify-center gap-2'>
+                        {loadingMessages.map((_, i) => (
+                            <div
+                                key={i}
+                                className={clsx(
+                                    'h-1 rounded-full transition-all duration-500',
+                                    i === currentLoadingMessage ? 'bg-primary-500 w-8' : 'bg-white/10 w-2'
+                                )}
+                            />
+                        ))}
+                    </div>
+                </motion.div>
             </div>
         </div>
     );
@@ -175,208 +155,180 @@ export default function ConversationSummaryModal({
         setTimeout(() => setCopied(false), 2000);
     };
 
-    if (!isOpen) return null;
-
     return (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4'>
-            <div className='bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[85vh] overflow-hidden flex flex-col animate-fade-in'>
-                <div className='relative bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6'>
-                    <h2 className='text-2xl font-bold text-white flex items-center gap-3'>
-                        <div className='w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm'>
-                            <svg
-                                className='w-6 h-6 text-white'
-                                fill='none'
-                                stroke='currentColor'
-                                viewBox='0 0 24 24'
-                            >
-                                <path
-                                    strokeLinecap='round'
-                                    strokeLinejoin='round'
-                                    strokeWidth={2}
-                                    d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
-                                />
-                            </svg>
-                        </div>
-                        Conversation Summary
-                    </h2>
-                    <p className='text-blue-100 text-sm mt-2'>
-                        Key insights and takeaways from your conversation
-                    </p>
-                    <div className='absolute top-6 right-6 flex items-center gap-2'>
-                        {!isLoading && summary && (
-                            <button
-                                onClick={handleCopySummary}
-                                className='cursor-pointer group flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all duration-200 backdrop-blur-sm border border-white/20'
-                                aria-label='Copy summary'
-                            >
-                                {copied ? (
-                                    <>
-                                        <Check className='w-4 h-4 text-white' />
-                                        <span className='text-sm font-medium text-white'>
-                                            Copied!
-                                        </span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Copy className='w-4 h-4 text-white' />
-                                        <span className='text-sm font-medium text-white'>
-                                            Copy
-                                        </span>
-                                    </>
-                                )}
-                            </button>
-                        )}
-                        <button
-                            onClick={onClose}
-                            className='p-2 hover:bg-white/20 rounded-xl transition-all duration-200 cursor-pointer'
-                            aria-label='Close'
-                        >
-                            <X className='w-6 h-6 text-white' />
-                        </button>
-                    </div>
-                </div>
-
-                <div className='flex-1 overflow-y-auto p-3 bg-gray-50'>
-                    {isLoading ? (
-                        <LoadingAnimation />
-                    ) : summary ? (
-                        <div className='space-y-4 max-w-4xl mx-auto animate-fade-in'>
-                            {summary.key_insights &&
-                                summary.key_insights.length > 0 && (
-                                    <div className='bg-white rounded-2xl shadow-sm border border-yellow-100 overflow-hidden'>
-                                        <div className='bg-gradient-to-r from-yellow-50 to-amber-50 px-5 py-3 border-b border-yellow-100'>
-                                            <div className='flex items-center gap-3'>
-                                                <div className='w-10 h-10 bg-yellow-500 rounded-xl flex items-center justify-center shadow-sm'>
-                                                    <Lightbulb className='w-5 h-5 text-white' />
-                                                </div>
-                                                <div>
-                                                    <h3 className='text-lg font-bold text-gray-900'>
-                                                        Key Insights
-                                                    </h3>
-                                                    <p className='text-xs text-gray-600'>
-                                                        Main takeaways from the
-                                                        conversation
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <ul className='p-4 space-y-2.5'>
-                                            {summary.key_insights.map(
-                                                (insight, index) => (
-                                                    <li
-                                                        key={index}
-                                                        className='flex items-start gap-4 group'
-                                                    >
-                                                        <div className='flex-shrink-0 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center mt-0.5 group-hover:bg-yellow-200 transition-colors'>
-                                                            <span className='text-yellow-700 font-semibold text-sm'>
-                                                                {index + 1}
-                                                            </span>
-                                                        </div>
-                                                        <span className='text-gray-700 leading-relaxed'>
-                                                            {insight}
-                                                        </span>
-                                                    </li>
-                                                ),
-                                            )}
-                                        </ul>
+        <AnimatePresence>
+            {isOpen && (
+                <div className='fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6'>
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                        className='absolute inset-0 bg-black/80 backdrop-blur-xl'
+                    />
+                    
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        className='relative bg-[#0a0a0a] rounded-[2.5rem] shadow-[0_32px_120px_rgba(0,0,0,0.8)] w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col border border-white/10'
+                    >
+                        {/* Header */}
+                        <div className='relative px-10 py-8 border-b border-white/5 bg-white/[0.01]'>
+                            <div className='flex items-center justify-between'>
+                                <div className='flex items-center gap-6'>
+                                    <div className='w-14 h-14 bg-gradient-to-br from-indigo-500 to-primary-600 rounded-2xl flex items-center justify-center shadow-2xl border border-white/20 transform -rotate-3 hover:rotate-0 transition-transform duration-500'>
+                                        <Sparkles className='w-7 h-7 text-white' />
                                     </div>
-                                )}
-
-                            {summary.top_objections &&
-                                summary.top_objections.length > 0 && (
-                                    <div className='bg-white rounded-2xl shadow-sm border border-red-100 overflow-hidden'>
-                                        <div className='bg-gradient-to-r from-red-50 to-rose-50 px-5 py-3 border-b border-red-100'>
-                                            <div className='flex items-center gap-3'>
-                                                <div className='w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center shadow-sm'>
-                                                    <AlertCircle className='w-5 h-5 text-white' />
-                                                </div>
-                                                <div>
-                                                    <h3 className='text-lg font-bold text-gray-900'>
-                                                        Top Objections
-                                                    </h3>
-                                                    <p className='text-xs text-gray-600'>
-                                                        Customer concerns and
-                                                        pushback points
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <ul className='p-4 space-y-2.5'>
-                                            {summary.top_objections.map(
-                                                (objection, index) => (
-                                                    <li
-                                                        key={index}
-                                                        className='flex items-start gap-4 p-2 bg-red-50/50 rounded-xl border border-red-100 group hover:border-red-200 transition-colors'
-                                                    >
-                                                        <div className='flex-shrink-0 w-6 h-6 bg-red-100 rounded-full flex items-center justify-center mt-0.5 group-hover:bg-red-200 transition-colors'>
-                                                            <AlertCircle className='w-4 h-4 text-red-600' />
-                                                        </div>
-                                                        <span className='text-gray-700 leading-relaxed'>
-                                                            {objection}
-                                                        </span>
-                                                    </li>
-                                                ),
-                                            )}
-                                        </ul>
+                                    <div className='space-y-1'>
+                                        <h2 className='text-3xl font-bold text-white tracking-tight'>
+                                            Conversation Summary
+                                        </h2>
+                                        <p className='text-white/40 text-[15px] font-medium'>
+                                            Digitalised insights from your interaction
+                                        </p>
                                     </div>
-                                )}
-
-                            {summary.executive_summary &&
-                                summary.executive_summary.length > 0 && (
-                                    <div className='bg-white rounded-2xl shadow-sm border border-blue-100 overflow-hidden'>
-                                        <div className='bg-gradient-to-r from-blue-50 to-cyan-50 px-5 py-3 border-b border-blue-100'>
-                                            <div className='flex items-center gap-3'>
-                                                <div className='w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center shadow-sm'>
-                                                    <List className='w-5 h-5 text-white' />
-                                                </div>
-                                                <div>
-                                                    <h3 className='text-lg font-bold text-gray-900'>
-                                                        Executive Summary
-                                                    </h3>
-                                                    <p className='text-xs text-gray-600'>
-                                                        Key points from the
-                                                        conversation
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <ol className='p-4 space-y-2.5'>
-                                            {summary.executive_summary.map(
-                                                (point, index) => (
-                                                    <li
-                                                        key={index}
-                                                        className='flex items-start gap-4 p-2 bg-blue-50/50 rounded-xl border border-blue-100 group hover:border-blue-200 transition-colors'
-                                                    >
-                                                        <div className='flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mt-0.5 group-hover:bg-blue-200 transition-colors'>
-                                                            <span className='text-blue-600 font-semibold text-sm'>
-                                                                {index + 1}
-                                                            </span>
-                                                        </div>
-                                                        <span className='text-gray-700 leading-relaxed'>
-                                                            {point}
-                                                        </span>
-                                                    </li>
-                                                ),
+                                </div>
+                                <div className='flex items-center gap-3'>
+                                    {!isLoading && summary && (
+                                        <button
+                                            onClick={handleCopySummary}
+                                            className=' cursor-pointer h-12 px-6 bg-white/[0.03] hover:bg-white/[0.08] text-white rounded-2xl transition-all duration-300 border border-white/10 flex items-center gap-2 font-bold text-sm uppercase tracking-widest'
+                                        >
+                                            {copied ? (
+                                                <Check className='w-4 h-4 text-emerald-400' />
+                                            ) : (
+                                                <Copy className='w-4 h-4' />
                                             )}
-                                        </ol>
-                                    </div>
-                                )}
-                        </div>
-                    ) : (
-                        <div className='flex flex-col items-center justify-center py-16'>
-                            <div className='w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mb-4'>
-                                <AlertCircle className='w-10 h-10 text-gray-400' />
+                                            {copied ? 'Captured' : 'Copy'}
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={onClose}
+                                        className='cursor-pointer w-12 h-12 flex items-center justify-center rounded-2xl bg-white/[0.03] hover:bg-white/[0.08] text-white/40 hover:text-white transition-all duration-300 border border-white/10'
+                                    >
+                                        <X className='w-6 h-6' />
+                                    </button>
+                                </div>
                             </div>
-                            <p className='text-gray-600 text-lg font-medium'>
-                                No summary available
-                            </p>
-                            <p className='text-gray-400 text-sm mt-2'>
-                                Generate a summary to see insights
-                            </p>
                         </div>
-                    )}
+
+                        {/* Content Area */}
+                        <div className='flex-1 overflow-y-auto custom-scrollbar p-10 bg-[#060606]'>
+                            {isLoading ? (
+                                <LoadingAnimation />
+                            ) : summary ? (
+                                <motion.div 
+                                    variants={staggerContainer}
+                                    initial="hidden"
+                                    animate="visible"
+                                    className='grid grid-cols-1 gap-8 max-w-5xl mx-auto'
+                                >
+                                    {/* Key Insights */}
+                                    {summary.key_insights?.length > 0 && (
+                                        <motion.div variants={staggerItem} className='relative group'>
+                                            <div className='absolute -inset-0.5 bg-gradient-to-r from-indigo-500/20 to-primary-500/20 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-1000' />
+                                            <div className='relative bg-white/[0.02] rounded-[2rem] border border-white/5 overflow-hidden backdrop-blur-3xl'>
+                                                <div className='px-8 py-6 border-b border-white/5 bg-white/[0.01] flex items-center justify-between'>
+                                                    <div className='flex items-center gap-4'>
+                                                        <div className='w-12 h-12 bg-indigo-500/20 rounded-xl flex items-center justify-center border border-indigo-500/30'>
+                                                            <Lightbulb className='w-6 h-6 text-indigo-400' />
+                                                        </div>
+                                                        <h3 className='text-xl font-bold text-white tracking-tight'>Key Insights</h3>
+                                                    </div>
+                                                    <span className='px-3 py-1 bg-indigo-500/10 text-indigo-400 rounded-full text-[10px] font-bold uppercase tracking-widest border border-indigo-500/20'>
+                                                        Strategic
+                                                    </span>
+                                                </div>
+                                                <div className='p-8 space-y-4'>
+                                                    {summary.key_insights.map((insight, index) => (
+                                                        <div key={index} className='flex items-start gap-5 group/item'>
+                                                            <div className='flex-shrink-0 w-8 h-8 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-sm font-bold text-indigo-400 mt-0.5 group-hover/item:border-indigo-500/30 transition-colors'>
+                                                                {index + 1}
+                                                            </div>
+                                                            <p className='text-[15px] leading-relaxed text-white/70 group-hover/item:text-white/90 transition-colors'>
+                                                                {insight}
+                                                            </p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    )}
+
+                                    <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+                                        {/* Top Objections */}
+                                        {summary.top_objections?.length > 0 && (
+                                            <motion.div variants={staggerItem} className='relative group'>
+                                                <div className='absolute -inset-0.5 bg-gradient-to-r from-rose-500/20 to-red-500/20 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-1000' />
+                                                <div className='relative bg-white/[0.02] h-full rounded-[2rem] border border-white/5 overflow-hidden backdrop-blur-3xl'>
+                                                    <div className='px-8 py-6 border-b border-white/5 bg-white/[0.01] flex items-center justify-between'>
+                                                        <div className='flex items-center gap-4'>
+                                                            <div className='w-12 h-12 bg-rose-500/20 rounded-xl flex items-center justify-center border border-rose-500/30'>
+                                                                <AlertCircle className='w-6 h-6 text-rose-400' />
+                                                            </div>
+                                                            <h3 className='text-xl font-bold text-white tracking-tight'>Points of Friction</h3>
+                                                        </div>
+                                                    </div>
+                                                    <div className='p-8 space-y-5'>
+                                                        {summary.top_objections.map((objection, index) => (
+                                                            <div key={index} className='flex items-start gap-4 p-4 bg-rose-500/[0.02] rounded-2xl border border-rose-500/10 hover:border-rose-500/30 transition-all'>
+                                                                <div className='flex-shrink-0 mt-1'>
+                                                                    <div className='w-2 h-2 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.5)]' />
+                                                                </div>
+                                                                <p className='text-[14px] leading-relaxed text-white/60 hover:text-white/90 transition-colors'>
+                                                                    {objection}
+                                                                </p>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        )}
+
+                                        {/* Executive Summary */}
+                                        {summary.executive_summary?.length > 0 && (
+                                            <motion.div variants={staggerItem} className='relative group'>
+                                                <div className='absolute -inset-0.5 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-1000' />
+                                                <div className='relative bg-white/[0.02] h-full rounded-[2rem] border border-white/5 overflow-hidden backdrop-blur-3xl'>
+                                                    <div className='px-8 py-6 border-b border-white/5 bg-white/[0.01] flex items-center justify-between'>
+                                                        <div className='flex items-center gap-4'>
+                                                            <div className='w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center border border-emerald-500/30'>
+                                                                <Layout className='w-6 h-6 text-emerald-400' />
+                                                            </div>
+                                                            <h3 className='text-xl font-bold text-white tracking-tight'>Synthesis</h3>
+                                                        </div>
+                                                    </div>
+                                                    <div className='p-8 space-y-5'>
+                                                        {summary.executive_summary.map((point, index) => (
+                                                            <div key={index} className='flex items-start gap-5'>
+                                                                <span className='flex-shrink-0 text-xl font-black text-emerald-500/20'>
+                                                                    {(index + 1).toString().padStart(2, '0')}
+                                                                </span>
+                                                                <p className='text-[14px] leading-relaxed text-white/60 hover:text-white/90 transition-colors'>
+                                                                    {point}
+                                                                </p>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </div>
+                                </motion.div>
+                            ) : (
+                                <div className='flex flex-col items-center justify-center py-24'>
+                                    <div className='w-24 h-24 bg-white/[0.02] rounded-3xl flex items-center justify-center mb-8 border border-white/5 transition-transform hover:scale-110 duration-500'>
+                                        <AlertCircle className='w-12 h-12 text-white/20' />
+                                    </div>
+                                    <h3 className='text-2xl font-bold text-white mb-2'>No Intelligence Captured</h3>
+                                    <p className='text-white/40 font-medium'>Generate a summary to extract persona insights</p>
+                                </div>
+                            )}
+                        </div>
+                    </motion.div>
                 </div>
-            </div>
-        </div>
+            )}
+        </AnimatePresence>
     );
 }

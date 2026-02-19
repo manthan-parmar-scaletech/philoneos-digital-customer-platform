@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Modal } from './ui/Modal';
-import { Button } from './ui/Button';
+import { MagicButton } from './ui/MagicButton';
 import { Input } from './ui/Input';
 import { X, Plus } from 'lucide-react';
 
@@ -216,30 +216,33 @@ export default function PersonaCreationModal({
             size='lg'
             title='Create New Customer'
             footer={
-                <>
-                    <Button
+                <div className='flex gap-4 w-full justify-end'>
+                    <MagicButton
                         type='button'
                         variant='secondary'
                         onClick={handleClose}
                         disabled={isLoading}
+                        className='w-auto px-8 bg-white/[0.03] border-white/10'
                     >
                         Cancel
-                    </Button>
-                    <Button
+                    </MagicButton>
+                    <MagicButton
                         type='submit'
                         variant='primary'
                         disabled={isLoading}
                         onClick={handleSubmit}
+                        className='w-auto px-10'
+                        isLoading={isLoading}
                     >
                         {isLoading ? 'Creating...' : 'Create Customer'}
-                    </Button>
-                </>
+                    </MagicButton>
+                </div>
             }
         >
-            <form onSubmit={handleSubmit} className='space-y-5'>
+            <form onSubmit={handleSubmit} className='space-y-4'>
                 <div className='grid grid-cols-2 gap-4'>
                     <div>
-                        <label className='block text-sm font-medium text-gray-700 mb-1'>
+                        <label className='block text-sm font-semibold text-gray-400 mb-2 ml-1'>
                             Occupation *
                         </label>
                         <Input
@@ -257,7 +260,7 @@ export default function PersonaCreationModal({
                     </div>
 
                     <div>
-                        <label className='block text-sm font-medium text-gray-700 mb-1'>
+                        <label className='block text-sm font-semibold text-gray-400 mb-2 ml-1'>
                             Age *
                         </label>
                         <Input
@@ -276,7 +279,7 @@ export default function PersonaCreationModal({
                 </div>
 
                 <div>
-                    <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    <label className='block text-sm font-semibold text-gray-400 mb-2 ml-1'>
                         Location *
                     </label>
                     <Input
@@ -294,7 +297,7 @@ export default function PersonaCreationModal({
                 </div>
 
                 <div>
-                    <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    <label className='block text-sm font-semibold text-gray-400 mb-2 ml-1'>
                         Short Description *
                     </label>
                     <textarea
@@ -307,10 +310,10 @@ export default function PersonaCreationModal({
                         }
                         placeholder='Brief description of this customer persona...'
                         rows={3}
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm text-gray-900 ${
+                        className={`w-full px-4 py-2 bg-white/[0.03] border rounded-xl focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500/40 outline-none transition-all text-sm text-white placeholder-gray-600 ${
                             errors.short_description
-                                ? 'border-red-300'
-                                : 'border-gray-300'
+                                ? 'border-red-500/50'
+                                : 'border-white/10'
                         }`}
                     />
                     <div className='flex justify-between items-center mt-1'>
@@ -326,7 +329,7 @@ export default function PersonaCreationModal({
                 </div>
 
                 <div>
-                    <label className='block text-sm font-medium text-gray-700 mb-2'>
+                    <label className='block text-sm font-semibold text-gray-400 mb-3 ml-1'>
                         Personality Traits
                     </label>
                     <div className='flex gap-2 mb-2'>
@@ -342,21 +345,21 @@ export default function PersonaCreationModal({
                             }}
                             placeholder='Add a trait...'
                         />
-                        <Button
+                        <MagicButton
                             type='button'
                             variant='secondary'
-                            size='sm'
+                            className='w-12 h-12 p-0 flex items-center justify-center rounded-xl bg-white/[0.03] border-white/10'
                             onClick={addTrait}
                         >
-                            <Plus className='w-4 h-4' />
-                        </Button>
+                            <Plus className='w-5 h-5' />
+                        </MagicButton>
                     </div>
                     {formData.personality_traits.length > 0 && (
                         <div className='flex flex-wrap gap-2'>
                             {formData.personality_traits.map((trait, index) => (
                                 <span
                                     key={index}
-                                    className='inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm'
+                                    className='inline-flex items-center gap-2 px-4 py-1.5 bg-primary-500/10 text-primary-400 border border-primary-500/20 rounded-full text-sm font-medium group'
                                 >
                                     {trait}
                                     <button
@@ -373,7 +376,7 @@ export default function PersonaCreationModal({
                 </div>
 
                 <div>
-                    <label className='block text-sm font-medium text-gray-700 mb-2'>
+                    <label className='block text-sm font-semibold text-gray-400 mb-3 ml-1'>
                         Motivations
                     </label>
                     <div className='flex gap-2 mb-2'>
@@ -391,21 +394,21 @@ export default function PersonaCreationModal({
                             }}
                             placeholder='Add a motivation...'
                         />
-                        <Button
+                        <MagicButton
                             type='button'
                             variant='secondary'
-                            size='sm'
+                            className='w-12 h-12 p-0 flex items-center justify-center rounded-xl bg-white/[0.03] border-white/10'
                             onClick={addMotivation}
                         >
-                            <Plus className='w-4 h-4' />
-                        </Button>
+                            <Plus className='w-5 h-5' />
+                        </MagicButton>
                     </div>
                     {formData.motivations.length > 0 && (
                         <ul className='space-y-2'>
                             {formData.motivations.map((motivation, index) => (
                                 <li
                                     key={index}
-                                    className='flex items-start gap-2 text-sm text-gray-700 bg-gray-50 p-2 rounded'
+                                    className='flex items-start gap-3 text-sm text-gray-300 bg-white/[0.02] border border-white/5 p-2 rounded-xl group'
                                 >
                                     <span className='text-blue-600 mt-0.5'>
                                         •
@@ -427,7 +430,7 @@ export default function PersonaCreationModal({
                 </div>
 
                 <div>
-                    <label className='block text-sm font-medium text-gray-700 mb-2'>
+                    <label className='block text-sm font-semibold text-gray-400 mb-3 ml-1'>
                         Custom Attributes
                         <span className='text-xs text-gray-500 ml-2 font-normal'>
                             (Add any domain-specific fields)
@@ -455,14 +458,14 @@ export default function PersonaCreationModal({
                                 }}
                                 placeholder='Value'
                             />
-                            <Button
+                            <MagicButton
                                 type='button'
                                 variant='secondary'
-                                size='sm'
+                                className='w-12 h-12 p-0 flex items-center justify-center rounded-xl bg-white/[0.03] border-white/10'
                                 onClick={addCustomAttribute}
                             >
-                                <Plus className='w-4 h-4' />
-                            </Button>
+                                <Plus className='w-5 h-5' />
+                            </MagicButton>
                         </div>
                     </div>
                     {formData.custom_attributes.length > 0 && (
@@ -470,9 +473,9 @@ export default function PersonaCreationModal({
                             {formData.custom_attributes.map((attr, index) => (
                                 <div
                                     key={index}
-                                    className='flex items-center gap-2 text-sm bg-gray-50 p-2 rounded'
+                                    className='flex items-center gap-3 text-sm bg-white/[0.02] border border-white/5 p-2 rounded-xl group'
                                 >
-                                    <span className='font-medium text-gray-700'>
+                                    <span className='font-bold text-primary-400'>
                                         {attr.key}:
                                     </span>
                                     <span className='flex-1 text-gray-900'>
@@ -494,7 +497,7 @@ export default function PersonaCreationModal({
                 </div>
 
                 <div>
-                    <label className='block text-sm font-medium text-gray-700 mb-2'>
+                    <label className='block text-sm font-semibold text-gray-400 mb-3 ml-1'>
                         Pain Points
                     </label>
                     <div className='flex gap-2 mb-2'>
@@ -512,21 +515,21 @@ export default function PersonaCreationModal({
                             }}
                             placeholder='Add a pain point...'
                         />
-                        <Button
+                        <MagicButton
                             type='button'
                             variant='secondary'
-                            size='sm'
+                            className='w-12 h-12 p-0 flex items-center justify-center rounded-xl bg-white/[0.03] border-white/10'
                             onClick={addPainPoint}
                         >
-                            <Plus className='w-4 h-4' />
-                        </Button>
+                            <Plus className='w-5 h-5' />
+                        </MagicButton>
                     </div>
                     {formData.pain_points.length > 0 && (
                         <ul className='space-y-2'>
                             {formData.pain_points.map((painPoint, index) => (
                                 <li
                                     key={index}
-                                    className='flex items-start gap-2 text-sm text-gray-700 bg-gray-50 p-2 rounded'
+                                    className='flex items-start gap-3 text-sm text-gray-300 bg-white/[0.02] border border-white/5 p-2 rounded-xl group'
                                 >
                                     <span className='text-blue-600 mt-0.5'>
                                         •
