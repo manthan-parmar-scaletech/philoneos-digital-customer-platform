@@ -1,5 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import type { Persona, Conversation, Message, Company } from '@/types';
+import type {
+    Persona,
+    Conversation,
+    Message,
+    Company,
+    ConversationSummary,
+    SummaryData,
+} from '@/types';
 import { MessageSquare, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import MessageBubble from './MessageBubble';
@@ -7,6 +14,7 @@ import TypingIndicator from './TypingIndicator';
 import ChatInput from './ChatInput';
 import PersonaDetailsPanel from './PersonaDetailsPanel';
 import ConversationHistoryPanel from './ConversationHistoryPanel';
+import ConversationSummaryModal from './ConversationSummaryModal';
 import { useRouter } from 'next/navigation';
 
 interface ChatInterfaceProps {
@@ -34,6 +42,11 @@ export default function ChatInterface({
 }: ChatInterfaceProps) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [summaryData, setSummaryData] = useState<ConversationSummary | null>(
+        null,
+    );
+    const [isSummaryLoading, setIsSummaryLoading] = useState(false);
+    const [showSummaryModal, setShowSummaryModal] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
 
@@ -52,8 +65,10 @@ export default function ChatInterface({
     useEffect(() => {
         if (selectedConversation) {
             fetchMessages(selectedConversation.id);
+            fetchSummary(selectedConversation.id);
         } else {
             setMessages([]);
+            setSummaryData(null);
         }
     }, [selectedConversation]);
 
@@ -70,6 +85,54 @@ export default function ChatInterface({
         }
 
         setMessages(data || []);
+    };
+
+    const fetchSummary = async (conversationId: string) => {
+        try {
+            const response = await fetch(
+                `/api/summary?conversationId=${conversationId}`,
+            );
+            if (response.ok) {
+                const data = await response.json();
+                setSummaryData(data.summary);
+            }
+        } catch (error) {
+            console.error('Error fetching summary:', error);
+        }
+    };
+
+    const handleGenerateSummary = async () => {
+        if (!selectedConversation) return;
+
+        setIsSummaryLoading(true);
+        setShowSummaryModal(true);
+
+        try {
+            const response = await fetch('/api/summary', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    conversationId: selectedConversation.id,
+                }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setSummaryData(data.summary);
+            } else {
+                console.error('Failed to generate summary');
+            }
+        } catch (error) {
+            console.error('Error generating summary:', error);
+        } finally {
+            setIsSummaryLoading(false);
+        }
+    };
+
+    const handleViewSummary = () => {
+        setShowSummaryModal(true);
     };
 
     const generateAIResponse = async (
@@ -289,6 +352,28 @@ export default function ChatInterface({
                             placeholder={`Message ${personaData.occupation}...`}
                             value={prefilledMessage}
                             onChange={onPrefilledMessageChange}
+                            summaryButton={{
+                                show: messages.length > 0,
+                                disabled:
+                                    messages.filter((m) => m.role === 'user')
+                                        .length < 3,
+                                label:
+                                    summaryData &&
+                                    summaryData.message_count_at_generation ===
+                                        messages.length
+                                        ? 'View Summary'
+                                        : 'Generate Summary',
+                                onClick:
+                                    summaryData &&
+                                    summaryData.message_count_at_generation ===
+                                        messages.length
+                                        ? handleViewSummary
+                                        : handleGenerateSummary,
+                                isViewMode:
+                                    summaryData !== null &&
+                                    summaryData.message_count_at_generation ===
+                                        messages.length,
+                            }}
                         />
                     </>
                 ) : (
@@ -311,6 +396,14 @@ export default function ChatInterface({
             <PersonaDetailsPanel
                 persona={persona}
                 primaryColor={company.primary_color}
+            />
+
+            {/* Summary Modal */}
+            <ConversationSummaryModal
+                isOpen={showSummaryModal}
+                onClose={() => setShowSummaryModal(false)}
+                summary={summaryData?.summary_json || null}
+                isLoading={isSummaryLoading}
             />
         </div>
     );

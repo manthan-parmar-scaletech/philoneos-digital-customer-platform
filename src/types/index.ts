@@ -39,3 +39,18 @@ export interface AuthUser {
     company_id: string;
     email?: string;
 }
+
+export interface SummaryData {
+    key_insights: string[];
+    top_objections: string[];
+    executive_summary: string[];
+}
+
+export interface ConversationSummary {
+    id: string;
+    conversation_id: string;
+    summary_json: SummaryData;
+    message_count_at_generation: number;
+    created_at: string;
+    updated_at: string;
+}

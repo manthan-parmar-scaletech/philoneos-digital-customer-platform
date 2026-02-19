@@ -38,9 +38,7 @@ export default function MessageBubble({
                 isUser ? 'bg-white' : 'bg-gray-50/50'
             } hover:bg-gray-50 transition-colors animate-fade-in border-b border-gray-100`}
         >
-            <div
-                className={`max-w-4xl mx-auto flex gap-4 ${isUser ? 'flex-row-reverse' : ''}`}
-            >
+            <div className={` flex gap-4 ${isUser ? 'flex-row-reverse' : ''}`}>
                 {/* Avatar */}
                 <div className='flex-shrink-0'>
                     {isUser ? (
