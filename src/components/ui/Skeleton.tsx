@@ -2,8 +2,8 @@ import { HTMLAttributes, forwardRef } from 'react';
 import { clsx } from 'clsx';
 import { motion } from 'framer-motion';
 
-interface SkeletonProps extends HTMLAttributes<HTMLDivElement> {
-    variant?: 'text' | 'circular' | 'rectangular';
+interface SkeletonProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onDrag' | 'onDragStart' | 'onDragEnd' | 'onAnimationStart' | 'onAnimationEnd'> {
+    variant?: 'text' | 'circular' | 'rectangular' | 'card' | 'avatar';
     width?: string | number;
     height?: string | number;
 }
