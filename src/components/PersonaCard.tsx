@@ -3,6 +3,7 @@ import { MessageCircle, User } from 'lucide-react';
 import { Card } from './ui/Card';
 import { Avatar } from './ui/Avatar';
 import { Button } from './ui/Button';
+import { useRouter } from 'next/navigation';
 
 interface PersonaCardProps {
     persona: Persona;
@@ -13,8 +14,10 @@ export default function PersonaCard({
     persona,
     primaryColor,
 }: PersonaCardProps) {
+    const router = useRouter();
+
     const handleStartConversation = () => {
-        window.location.href = `/chat/${persona.id}`;
+        router.push(`/chat/${persona.id}`);
     };
 
     const personaData = persona.persona_parameters_json as {

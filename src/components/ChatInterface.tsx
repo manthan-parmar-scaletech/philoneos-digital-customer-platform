@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import type { Persona, Conversation, Message, Company } from '@/types';
-import { MessageSquare, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MessageSquare, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import MessageBubble from './MessageBubble';
 import TypingIndicator from './TypingIndicator';
 import ChatInput from './ChatInput';
-import { Button } from './ui/Button';
+import PersonaDetailsPanel from './PersonaDetailsPanel';
+import { useRouter } from 'next/navigation';
 
 interface ChatInterfaceProps {
     persona: Persona;
@@ -28,8 +29,8 @@ export default function ChatInterface({
 }: ChatInterfaceProps) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [sidebarOpen, setSidebarOpen] = useState(true);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const router = useRouter();
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -173,74 +174,55 @@ export default function ChatInterface({
     };
 
     return (
-        <div className='flex h-[calc(100vh-8rem)] bg-white'>
-            {/* Sidebar */}
-            <div
-                className={`${
-                    sidebarOpen ? 'w-64' : 'w-0'
-                } transition-all duration-300 overflow-hidden border-r border-gray-200 bg-gray-50 flex flex-col`}
-            >
-                <div className='p-4 border-b border-gray-200'>
-                    <Button
-                        variant='primary'
-                        size='sm'
-                        className='w-full'
-                        onClick={onNewConversation}
-                    >
-                        <Plus className='w-4 h-4 mr-2' />
-                        New Chat
-                    </Button>
-                </div>
-
-                <div className='flex-1 overflow-y-auto p-2'>
-                    {conversations.map((conversation) => (
-                        <button
-                            key={conversation.id}
-                            onClick={() => onConversationSelect(conversation)}
-                            className={`w-full text-left p-3 rounded-lg mb-1 transition-colors ${
-                                selectedConversation?.id === conversation.id
-                                    ? 'bg-white shadow-sm border border-gray-200'
-                                    : 'hover:bg-white/50'
-                            }`}
-                        >
-                            <div className='flex items-center gap-2'>
-                                <MessageSquare className='w-4 h-4 text-gray-400 shrink-0' />
-                                <div className='flex-1 min-w-0'>
-                                    <p className='text-sm font-medium text-gray-900 truncate'>
-                                        {conversation.title}
-                                    </p>
-                                    <p className='text-xs text-gray-500'>
-                                        {new Date(
-                                            conversation.created_at,
-                                        ).toLocaleDateString()}
-                                    </p>
-                                </div>
-                            </div>
-                        </button>
-                    ))}
-                </div>
-            </div>
-
+        <div className='flex h-screen bg-white'>
             {/* Main Chat Area */}
-            <div className='flex-1 flex flex-col'>
-                {/* Toggle Sidebar Button */}
-                <div className='absolute left-0 top-1/2 -translate-y-1/2 z-10'>
-                    <button
-                        onClick={() => setSidebarOpen(!sidebarOpen)}
-                        className='bg-white border border-gray-200 rounded-r-lg p-2 shadow-sm hover:bg-gray-50 transition-colors'
-                    >
-                        {sidebarOpen ? (
-                            <ChevronLeft className='w-4 h-4 text-gray-600' />
-                        ) : (
-                            <ChevronRight className='w-4 h-4 text-gray-600' />
-                        )}
-                    </button>
+            <div className='flex-1 flex flex-col h-screen'>
+                {/* Header */}
+                <div className='border-b border-gray-200 bg-white px-6 py-4'>
+                    <div className='flex items-center gap-4'>
+                        <button
+                            onClick={() => router.push('/dashboard')}
+                            className='flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors'
+                        >
+                            <ArrowLeft className='w-5 h-5' />
+                            <span className='font-medium'>
+                                Back to Dashboard
+                            </span>
+                        </button>
+                        <div className='h-6 w-px bg-gray-300'></div>
+                        <div className='flex items-center gap-3'>
+                            <div className='w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center'>
+                                <svg
+                                    viewBox='0 0 24 24'
+                                    fill='none'
+                                    className='w-4 h-4 text-white'
+                                    stroke='currentColor'
+                                    strokeWidth='2'
+                                    strokeLinecap='round'
+                                    strokeLinejoin='round'
+                                >
+                                    <path d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z' />
+                                </svg>
+                            </div>
+                            <div>
+                                <h1 className='text-sm font-semibold text-gray-900'>
+                                    {persona.name}
+                                </h1>
+                                <p className='text-xs text-gray-500'>
+                                    {persona.short_description.substring(0, 60)}
+                                    ...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
                 {selectedConversation ? (
                     <>
                         {/* Messages */}
-                        <div className='flex-1 overflow-y-auto'>
+                        <div
+                            className='flex-1 overflow-y-auto'
+                            style={{ height: 'calc(100vh - 180px)' }}
+                        >
                             {messages.length === 0 ? (
                                 <div className='h-full flex items-center justify-center'>
                                     <div className='text-center max-w-md px-4'>
@@ -248,13 +230,15 @@ export default function ChatInterface({
                                             <MessageSquare className='w-8 h-8 text-blue-600' />
                                         </div>
                                         <h3 className='text-xl font-semibold text-gray-900 mb-2'>
-                                            Start a conversation with {persona.name}
+                                            Start a conversation with{' '}
+                                            {persona.name}
                                         </h3>
                                         <p className='text-gray-600 mb-4'>
                                             {persona.short_description}
                                         </p>
                                         <p className='text-sm text-gray-500'>
-                                            Ask questions, test messaging, or explore their perspective
+                                            Ask questions, test messaging, or
+                                            explore their perspective
                                         </p>
                                     </div>
                                 </div>
@@ -298,20 +282,23 @@ export default function ChatInterface({
                                 No conversation selected
                             </h3>
                             <p className='text-gray-600 mb-6'>
-                                Start a new conversation or select an existing one from the sidebar
+                                Start a new conversation from the panel on the
+                                right
                             </p>
-                            <Button
-                                variant='primary'
-                                size='lg'
-                                onClick={onNewConversation}
-                            >
-                                <Plus className='w-5 h-5 mr-2' />
-                                Start New Conversation
-                            </Button>
                         </div>
                     </div>
                 )}
             </div>
+
+            {/* Right Panel - Persona Details & Conversations */}
+            <PersonaDetailsPanel
+                persona={persona}
+                conversations={conversations}
+                selectedConversation={selectedConversation}
+                onConversationSelect={onConversationSelect}
+                onNewConversation={onNewConversation}
+                primaryColor={company.primary_color}
+            />
         </div>
     );
 }

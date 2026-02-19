@@ -9,14 +9,8 @@ import PersonaCard from '@/components/PersonaCard';
 import { Card } from '@/components/ui/Card';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { Button } from '@/components/ui/Button';
-import {
-    MessageSquare,
-    Users,
-    TrendingUp,
-    LogOut,
-    Plus,
-    Sparkles,
-} from 'lucide-react';
+import Sidebar from '@/components/Sidebar';
+import { MessageSquare, Users, LogOut, Plus, Sparkles } from 'lucide-react';
 
 export default function DashboardPage() {
     const [company, setCompany] = useState<Company | null>(null);
@@ -65,31 +59,55 @@ export default function DashboardPage() {
         fetchData();
     }, [router]);
 
-    const handleLogout = async () => {
-        await supabase.auth.signOut();
-        router.push('/login');
-    };
-
     if (loading) {
         return (
-            <div className='min-h-screen bg-gray-50'>
-                <header className='bg-white shadow-sm border-b'>
-                    <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-                        <div className='flex justify-between items-center h-16'>
-                            <Skeleton width={200} height={32} />
-                            <Skeleton width={100} height={36} />
-                        </div>
-                    </div>
-                </header>
-                <main className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
-                    <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-8'>
-                        {[1, 2, 3].map((i) => (
-                            <Skeleton key={i} height={120} />
-                        ))}
-                    </div>
+            <div className='min-h-screen bg-gray-50 flex animate-fade-in'>
+                {/* Sidebar */}
+                <Sidebar companyName='Philoneos' />
+
+                {/* Main Content */}
+                <main className='flex-1 ml-60 p-8'>
                     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
                         {[1, 2, 3].map((i) => (
-                            <Skeleton key={i} height={300} />
+                            <Card
+                                key={i}
+                                padding='none'
+                                className='animate-fade-in'
+                                style={{ animationDelay: `${(i + 3) * 100}ms` }}
+                            >
+                                <Skeleton variant='rectangular' height={96} />
+                                <div className='p-6 space-y-4'>
+                                    <div className='flex items-center gap-4'>
+                                        <Skeleton
+                                            variant='circular'
+                                            width={64}
+                                            height={64}
+                                        />
+                                        <div className='flex-1 space-y-2'>
+                                            <Skeleton
+                                                variant='text'
+                                                width={150}
+                                                height={20}
+                                            />
+                                            <Skeleton
+                                                variant='text'
+                                                width={100}
+                                                height={16}
+                                            />
+                                        </div>
+                                    </div>
+                                    <Skeleton variant='text' height={40} />
+                                    <Skeleton
+                                        variant='text'
+                                        height={16}
+                                        width={80}
+                                    />
+                                    <Skeleton
+                                        variant='rectangular'
+                                        height={36}
+                                    />
+                                </div>
+                            </Card>
                         ))}
                     </div>
                 </main>
@@ -98,99 +116,16 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className='min-h-screen bg-gray-50'>
-            {/* Header */}
-            <header className='bg-white shadow-sm border-b sticky top-0 z-50'>
-                <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-                    <div className='flex justify-between items-center h-16'>
-                        <div className='flex items-center space-x-4'>
-                            {company?.logo_url ? (
-                                <Image
-                                    src={company.logo_url}
-                                    alt={company.name}
-                                    width={40}
-                                    height={40}
-                                    className='h-10 w-10 rounded-lg'
-                                />
-                            ) : (
-                                <div className='w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center'>
-                                    <MessageSquare className='w-6 h-6 text-white' />
-                                </div>
-                            )}
-                            <div>
-                                <h1 className='text-xl font-bold text-gray-900'>
-                                    {company?.name || 'Philoneos'}
-                                </h1>
-                                <p className='text-xs text-gray-500'>
-                                    Digital Customer Intelligence
-                                </p>
-                            </div>
-                        </div>
-                        <Button
-                            variant='ghost'
-                            size='sm'
-                            onClick={handleLogout}
-                            className='text-gray-600 hover:text-gray-900'
-                        >
-                            <LogOut className='w-4 h-4 mr-2' />
-                            Sign out
-                        </Button>
-                    </div>
-                </div>
-            </header>
+        <div className='min-h-screen bg-gray-50 flex animate-fade-in'>
+            {/* Sidebar */}
+            <Sidebar
+                companyName={company?.name}
+                companyLogo={company?.logo_url}
+            />
 
             {/* Main Content */}
-            <main className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+            <main className='flex-1 ml-60 p-8'>
                 {/* Stats Cards */}
-                <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 animate-fade-in'>
-                    <Card hover padding='md'>
-                        <div className='flex items-center justify-between'>
-                            <div>
-                                <p className='text-sm font-medium text-gray-600 mb-1'>
-                                    Active Personas
-                                </p>
-                                <p className='text-3xl font-bold text-gray-900'>
-                                    {personas.length}
-                                </p>
-                            </div>
-                            <div className='w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center'>
-                                <Users className='w-6 h-6 text-blue-600' />
-                            </div>
-                        </div>
-                    </Card>
-
-                    <Card hover padding='md'>
-                        <div className='flex items-center justify-between'>
-                            <div>
-                                <p className='text-sm font-medium text-gray-600 mb-1'>
-                                    Total Conversations
-                                </p>
-                                <p className='text-3xl font-bold text-gray-900'>
-                                    0
-                                </p>
-                            </div>
-                            <div className='w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center'>
-                                <MessageSquare className='w-6 h-6 text-green-600' />
-                            </div>
-                        </div>
-                    </Card>
-
-                    <Card hover padding='md'>
-                        <div className='flex items-center justify-between'>
-                            <div>
-                                <p className='text-sm font-medium text-gray-600 mb-1'>
-                                    Insights Generated
-                                </p>
-                                <p className='text-3xl font-bold text-gray-900'>
-                                    0
-                                </p>
-                            </div>
-                            <div className='w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center'>
-                                <TrendingUp className='w-6 h-6 text-purple-600' />
-                            </div>
-                        </div>
-                    </Card>
-                </div>
 
                 {/* Section Header */}
                 <div className='flex justify-between items-center mb-6'>

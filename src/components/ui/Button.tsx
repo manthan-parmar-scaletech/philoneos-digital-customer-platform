@@ -2,7 +2,7 @@ import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { clsx } from 'clsx';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
+    variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline';
     size?: 'sm' | 'md' | 'lg';
     isLoading?: boolean;
 }
@@ -21,15 +21,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref,
     ) => {
         const baseStyles =
-            'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+            'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed';
 
         const variants = {
             primary:
-                'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-sm hover:shadow-md',
+                'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-2 shadow-sm hover:shadow-md',
             secondary:
-                'bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500',
-            ghost: 'bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
-            danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm',
+                'bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500 focus:ring-offset-2 border border-gray-300',
+            ghost: 'bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-500 focus:ring-offset-2',
+            danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 focus:ring-offset-2 shadow-sm hover:shadow-md',
+            outline:
+                'bg-transparent border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 focus:ring-gray-500 focus:ring-offset-2',
         };
 
         const sizes = {
@@ -56,6 +58,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                         xmlns='http://www.w3.org/2000/svg'
                         fill='none'
                         viewBox='0 0 24 24'
+                        aria-hidden='true'
                     >
                         <circle
                             className='opacity-25'
@@ -63,7 +66,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                             cy='12'
                             r='10'
                             stroke='currentColor'
-                            strokeWidth='4'
+                            strokeWidth='3'
                         ></circle>
                         <path
                             className='opacity-75'

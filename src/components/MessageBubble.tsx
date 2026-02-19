@@ -35,15 +35,17 @@ export default function MessageBubble({
     return (
         <div
             className={`group relative py-6 px-4 ${
-                isUser ? 'bg-white' : 'bg-gray-50'
-            } hover:bg-opacity-80 transition-colors animate-fade-in`}
+                isUser ? 'bg-white' : 'bg-gray-50/50'
+            } hover:bg-gray-50 transition-colors animate-fade-in border-b border-gray-100`}
         >
-            <div className='max-w-3xl mx-auto flex gap-4'>
+            <div
+                className={`max-w-4xl mx-auto flex gap-4 ${isUser ? 'flex-row-reverse' : ''}`}
+            >
                 {/* Avatar */}
                 <div className='flex-shrink-0'>
                     {isUser ? (
-                        <div className='w-8 h-8 bg-blue-600 rounded-sm flex items-center justify-center'>
-                            <User className='w-5 h-5 text-white' />
+                        <div className='w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm'>
+                            <User className='w-4 h-4 text-white' />
                         </div>
                     ) : (
                         <Avatar
@@ -58,7 +60,9 @@ export default function MessageBubble({
 
                 {/* Content */}
                 <div className='flex-1 min-w-0'>
-                    <div className='flex items-center gap-2 mb-2'>
+                    <div
+                        className={`flex items-center gap-2 mb-2 ${isUser ? 'justify-end' : ''}`}
+                    >
                         <span className='font-semibold text-sm text-gray-900'>
                             {isUser ? 'You' : personaName || 'Assistant'}
                         </span>
@@ -71,7 +75,7 @@ export default function MessageBubble({
                     </div>
 
                     {isUser ? (
-                        <div className='text-gray-900 whitespace-pre-wrap'>
+                        <div className='text-gray-900 whitespace-pre-wrap text-right'>
                             {content}
                         </div>
                     ) : (
@@ -133,10 +137,12 @@ export default function MessageBubble({
                     )}
 
                     {/* Actions */}
-                    <div className='flex items-center gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity'>
+                    <div
+                        className={`flex items-center gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity ${isUser ? 'justify-end' : ''}`}
+                    >
                         <button
                             onClick={handleCopy}
-                            className='text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-200 transition-colors'
+                            className='text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-200 transition-colors cursor-pointer'
                         >
                             <Copy className='w-3 h-3' />
                             {copied ? 'Copied!' : 'Copy'}

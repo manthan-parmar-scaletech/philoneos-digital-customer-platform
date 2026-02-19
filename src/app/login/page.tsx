@@ -39,13 +39,13 @@ export default function LoginPage() {
     };
 
     return (
-        <div className='min-h-screen flex'>
+        <div className='min-h-screen flex animate-fade-in'>
             {/* Left Side - Login Form */}
             <div className='flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-white'>
-                <div className='w-full max-w-md space-y-8 animate-fade-in'>
+                <div className='w-full max-w-md space-y-8'>
                     {/* Logo/Brand */}
                     <div className='text-center'>
-                        <div className='inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl mb-4 shadow-lg'>
+                        <div className='inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-xl mb-4 shadow-lg'>
                             <MessageSquare className='w-8 h-8 text-white' />
                         </div>
                         <h1 className='text-3xl font-bold text-gray-900 mb-2'>
@@ -57,7 +57,7 @@ export default function LoginPage() {
                     </div>
 
                     {/* Login Form */}
-                    <Card padding='lg' className='shadow-xl border-gray-200'>
+                    <Card padding='lg' className='shadow-lg border-gray-200/80'>
                         <form onSubmit={handleLogin} className='space-y-6'>
                             <div className='space-y-4'>
                                 <Input
@@ -94,8 +94,8 @@ export default function LoginPage() {
                             </div>
 
                             {error && (
-                                <div className='bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm animate-slide-down'>
-                                    <p className='font-medium'>
+                                <div className='bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm animate-slide-down'>
+                                    <p className='font-semibold mb-1'>
                                         Authentication failed
                                     </p>
                                     <p className='text-red-600'>{error}</p>
@@ -122,7 +122,7 @@ export default function LoginPage() {
             </div>
 
             {/* Right Side - Branding/Features */}
-            <div className='hidden lg:flex flex-1 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 p-12 items-center justify-center relative overflow-hidden'>
+            <div className='hidden lg:flex flex-1 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 p-12 items-center justify-center relative overflow-hidden'>
                 {/* Background Pattern */}
                 <div className='absolute inset-0 opacity-10'>
                     <div
@@ -149,45 +149,45 @@ export default function LoginPage() {
 
                     {/* Feature Cards */}
                     <div className='space-y-4'>
-                        <div className='flex items-start space-x-4 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20'>
-                            <div className='flex-shrink-0 w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center'>
+                        <div className='flex items-start space-x-4 bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20 hover:bg-white/15 transition-all duration-200'>
+                            <div className='shrink-0 w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center'>
                                 <Sparkles className='w-5 h-5' />
                             </div>
                             <div>
                                 <h3 className='font-semibold mb-1'>
                                     AI-Powered Personas
                                 </h3>
-                                <p className='text-sm text-blue-100'>
+                                <p className='text-sm text-blue-100 leading-relaxed'>
                                     Generate realistic customer personas with
                                     detailed backgrounds and motivations
                                 </p>
                             </div>
                         </div>
 
-                        <div className='flex items-start space-x-4 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20'>
-                            <div className='flex-shrink-0 w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center'>
+                        <div className='flex items-start space-x-4 bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20 hover:bg-white/15 transition-all duration-200'>
+                            <div className='shrink-0 w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center'>
                                 <MessageSquare className='w-5 h-5' />
                             </div>
                             <div>
                                 <h3 className='font-semibold mb-1'>
                                     Natural Conversations
                                 </h3>
-                                <p className='text-sm text-blue-100'>
+                                <p className='text-sm text-blue-100 leading-relaxed'>
                                     Chat with synthetic customers to test
                                     messaging and gather insights
                                 </p>
                             </div>
                         </div>
 
-                        <div className='flex items-start space-x-4 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20'>
-                            <div className='flex-shrink-0 w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center'>
+                        <div className='flex items-start space-x-4 bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20 hover:bg-white/15 transition-all duration-200'>
+                            <div className='shrink-0 w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center'>
                                 <TrendingUp className='w-5 h-5' />
                             </div>
                             <div>
                                 <h3 className='font-semibold mb-1'>
                                     Data-Driven Decisions
                                 </h3>
-                                <p className='text-sm text-blue-100'>
+                                <p className='text-sm text-blue-100 leading-relaxed'>
                                     Make informed product and marketing
                                     decisions based on customer feedback
                                 </p>

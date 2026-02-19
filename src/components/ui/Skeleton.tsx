@@ -9,27 +9,25 @@ interface SkeletonProps extends HTMLAttributes<HTMLDivElement> {
 
 export const Skeleton = forwardRef<HTMLDivElement, SkeletonProps>(
     (
-        {
-            variant = 'rectangular',
-            width,
-            height,
-            className,
-            style,
-            ...props
-        },
+        { variant = 'rectangular', width, height, className, style, ...props },
         ref,
     ) => {
         const variants = {
-            text: 'h-4 rounded',
+            text: 'h-4 rounded-md',
             circular: 'rounded-full',
             rectangular: 'rounded-lg',
+            card: 'rounded-xl',
+            avatar: 'rounded-full',
         };
 
         return (
             <div
                 ref={ref}
                 className={clsx(
-                    'animate-pulse bg-gray-200',
+                    'relative overflow-hidden bg-gray-200',
+                    'before:absolute before:inset-0 before:-translate-x-full',
+                    'before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r',
+                    'before:from-transparent before:via-white/20 before:to-transparent',
                     variants[variant],
                     className,
                 )}
