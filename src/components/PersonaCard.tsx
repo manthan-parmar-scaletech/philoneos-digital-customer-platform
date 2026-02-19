@@ -55,16 +55,24 @@ export default function PersonaCard({
             className='overflow-hidden group cursor-pointer transition-all duration-300 hover:scale-[1.02] animate-fade-in'
             onClick={handleStartConversation}
         >
-            {/* Header with gradient */}
-            <div
-                className='h-24 bg-gradient-to-br from-blue-500 to-blue-600 relative'
-                style={{
-                    background: primaryColor
-                        ? `linear-gradient(135deg, ${primaryColor} 0%, ${primaryColor}dd 100%)`
-                        : undefined,
-                }}
-            >
-                <div className='absolute inset-0 bg-black/10'></div>
+            {/* Header with glass morphism */}
+            <div className='h-24 relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900'>
+                {/* Glass morphism overlay */}
+                <div className='absolute inset-0 bg-gradient-to-br from-blue-500/20 via-purple-500/10 to-blue-600/20 backdrop-blur-sm'></div>
+
+                {/* Animated gradient orbs */}
+                <div className='absolute -top-10 -right-10 w-32 h-32 bg-blue-500/30 rounded-full blur-2xl'></div>
+                <div className='absolute -bottom-10 -left-10 w-32 h-32 bg-purple-500/20 rounded-full blur-2xl'></div>
+
+                {/* Subtle pattern overlay */}
+                <div
+                    className='absolute inset-0 opacity-5'
+                    style={{
+                        backgroundImage:
+                            'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
+                        backgroundSize: '24px 24px',
+                    }}
+                ></div>
             </div>
 
             {/* Content */}

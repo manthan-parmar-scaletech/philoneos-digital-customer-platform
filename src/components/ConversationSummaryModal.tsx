@@ -236,15 +236,15 @@ export default function ConversationSummaryModal({
                     </div>
                 </div>
 
-                <div className='flex-1 overflow-y-auto p-8 bg-gray-50'>
+                <div className='flex-1 overflow-y-auto p-3 bg-gray-50'>
                     {isLoading ? (
                         <LoadingAnimation />
                     ) : summary ? (
-                        <div className='space-y-6 max-w-3xl mx-auto'>
+                        <div className='space-y-4 max-w-4xl mx-auto animate-fade-in'>
                             {summary.key_insights &&
                                 summary.key_insights.length > 0 && (
                                     <div className='bg-white rounded-2xl shadow-sm border border-yellow-100 overflow-hidden'>
-                                        <div className='bg-gradient-to-r from-yellow-50 to-amber-50 px-6 py-4 border-b border-yellow-100'>
+                                        <div className='bg-gradient-to-r from-yellow-50 to-amber-50 px-5 py-3 border-b border-yellow-100'>
                                             <div className='flex items-center gap-3'>
                                                 <div className='w-10 h-10 bg-yellow-500 rounded-xl flex items-center justify-center shadow-sm'>
                                                     <Lightbulb className='w-5 h-5 text-white' />
@@ -260,7 +260,7 @@ export default function ConversationSummaryModal({
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul className='p-6 space-y-4'>
+                                        <ul className='p-4 space-y-2.5'>
                                             {summary.key_insights.map(
                                                 (insight, index) => (
                                                     <li
@@ -285,7 +285,7 @@ export default function ConversationSummaryModal({
                             {summary.top_objections &&
                                 summary.top_objections.length > 0 && (
                                     <div className='bg-white rounded-2xl shadow-sm border border-red-100 overflow-hidden'>
-                                        <div className='bg-gradient-to-r from-red-50 to-rose-50 px-6 py-4 border-b border-red-100'>
+                                        <div className='bg-gradient-to-r from-red-50 to-rose-50 px-5 py-3 border-b border-red-100'>
                                             <div className='flex items-center gap-3'>
                                                 <div className='w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center shadow-sm'>
                                                     <AlertCircle className='w-5 h-5 text-white' />
@@ -301,12 +301,12 @@ export default function ConversationSummaryModal({
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul className='p-6 space-y-4'>
+                                        <ul className='p-4 space-y-2.5'>
                                             {summary.top_objections.map(
                                                 (objection, index) => (
                                                     <li
                                                         key={index}
-                                                        className='flex items-start gap-4 p-4 bg-red-50/50 rounded-xl border border-red-100 group hover:border-red-200 transition-colors'
+                                                        className='flex items-start gap-4 p-2 bg-red-50/50 rounded-xl border border-red-100 group hover:border-red-200 transition-colors'
                                                     >
                                                         <div className='flex-shrink-0 w-6 h-6 bg-red-100 rounded-full flex items-center justify-center mt-0.5 group-hover:bg-red-200 transition-colors'>
                                                             <AlertCircle className='w-4 h-4 text-red-600' />
@@ -324,7 +324,7 @@ export default function ConversationSummaryModal({
                             {summary.executive_summary &&
                                 summary.executive_summary.length > 0 && (
                                     <div className='bg-white rounded-2xl shadow-sm border border-blue-100 overflow-hidden'>
-                                        <div className='bg-gradient-to-r from-blue-50 to-cyan-50 px-6 py-4 border-b border-blue-100'>
+                                        <div className='bg-gradient-to-r from-blue-50 to-cyan-50 px-5 py-3 border-b border-blue-100'>
                                             <div className='flex items-center gap-3'>
                                                 <div className='w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center shadow-sm'>
                                                     <List className='w-5 h-5 text-white' />
@@ -340,12 +340,12 @@ export default function ConversationSummaryModal({
                                                 </div>
                                             </div>
                                         </div>
-                                        <ol className='p-6 space-y-4'>
+                                        <ol className='p-4 space-y-2.5'>
                                             {summary.executive_summary.map(
                                                 (point, index) => (
                                                     <li
                                                         key={index}
-                                                        className='flex items-start gap-4 p-4 bg-blue-50/50 rounded-xl border border-blue-100 group hover:border-blue-200 transition-colors'
+                                                        className='flex items-start gap-4 p-2 bg-blue-50/50 rounded-xl border border-blue-100 group hover:border-blue-200 transition-colors'
                                                     >
                                                         <div className='flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mt-0.5 group-hover:bg-blue-200 transition-colors'>
                                                             <span className='text-blue-600 font-semibold text-sm'>

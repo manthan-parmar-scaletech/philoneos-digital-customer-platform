@@ -122,6 +122,7 @@ export default function ChatInterface({
             if (response.ok) {
                 const data = await response.json();
                 setSummaryData(data.summary);
+                await new Promise((resolve) => setTimeout(resolve, 1500));
             } else {
                 console.error('Failed to generate summary');
             }

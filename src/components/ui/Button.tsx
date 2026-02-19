@@ -21,17 +21,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref,
     ) => {
         const baseStyles =
-            'inline-flex items-center justify-center font-medium rounded-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed';
+            'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm relative overflow-hidden';
 
         const variants = {
             primary:
-                'bg-[var(--sidebar-bg)] text-white hover:bg-[var(--sidebar-hover)] focus:ring-[var(--sidebar-active)] focus:ring-offset-2 shadow-sm hover:shadow-md border border-[var(--sidebar-border)]',
+                'bg-gradient-to-br from-slate-800/90 to-slate-900/90 text-white hover:from-slate-700/90 hover:to-slate-800/90 focus:ring-blue-500 shadow-lg hover:shadow-xl border border-slate-700/50 hover:border-slate-600/50 before:absolute before:inset-0 before:bg-gradient-to-br before:from-blue-500/10 before:to-purple-500/10 before:opacity-0 hover:before:opacity-100 before:transition-opacity',
             secondary:
-                'bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500 focus:ring-offset-2 border border-gray-300',
-            ghost: 'bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-500 focus:ring-offset-2',
-            danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 focus:ring-offset-2 shadow-sm hover:shadow-md',
+                'bg-gradient-to-br from-gray-100/80 to-gray-200/80 text-gray-900 hover:from-gray-200/90 hover:to-gray-300/90 focus:ring-gray-500 border border-gray-300/50 shadow-md hover:shadow-lg backdrop-blur-md',
+            ghost: 'bg-white/5 text-gray-700 hover:bg-white/10 focus:ring-gray-500 backdrop-blur-md border border-gray-200/30 hover:border-gray-300/50',
+            danger: 'bg-gradient-to-br from-red-600/90 to-red-700/90 text-white hover:from-red-500/90 hover:to-red-600/90 focus:ring-red-500 shadow-lg hover:shadow-xl border border-red-500/50 hover:border-red-400/50',
             outline:
-                'bg-transparent border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 focus:ring-gray-500 focus:ring-offset-2',
+                'bg-white/5 border-2 border-gray-300/50 text-gray-700 hover:bg-white/10 hover:border-gray-400/60 focus:ring-gray-500 backdrop-blur-md shadow-sm hover:shadow-md',
         };
 
         const sizes = {
