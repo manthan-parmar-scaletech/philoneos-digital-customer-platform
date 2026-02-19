@@ -122,7 +122,7 @@ export default function Sidebar({
                                                     ? 'px-2 py-2.5 justify-center'
                                                     : 'px-3 py-2.5',
                                                 item.active
-                                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
+                                                    ? 'bg-gray-800 text-white border-l-4 border-blue-500 shadow-sm'
                                                     : 'text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover)]',
                                             )}
                                             title={
