@@ -6,6 +6,7 @@ import MessageBubble from './MessageBubble';
 import TypingIndicator from './TypingIndicator';
 import ChatInput from './ChatInput';
 import PersonaDetailsPanel from './PersonaDetailsPanel';
+import ConversationHistoryPanel from './ConversationHistoryPanel';
 import { useRouter } from 'next/navigation';
 
 interface ChatInterfaceProps {
@@ -179,6 +180,14 @@ export default function ChatInterface({
 
     return (
         <div className='flex h-screen bg-white'>
+            {/* Left Panel - Conversation History */}
+            <ConversationHistoryPanel
+                conversations={conversations}
+                selectedConversation={selectedConversation}
+                onConversationSelect={onConversationSelect}
+                onNewConversation={onNewConversation}
+            />
+
             {/* Main Chat Area */}
             <div className='flex-1 flex flex-col h-screen'>
                 {/* Header */}
@@ -285,20 +294,16 @@ export default function ChatInterface({
                             </h3>
                             <p className='text-gray-600 mb-6'>
                                 Start a new conversation from the panel on the
-                                right
+                                left
                             </p>
                         </div>
                     </div>
                 )}
             </div>
 
-            {/* Right Panel - Persona Details & Conversations */}
+            {/* Right Panel - Persona Details */}
             <PersonaDetailsPanel
                 persona={persona}
-                conversations={conversations}
-                selectedConversation={selectedConversation}
-                onConversationSelect={onConversationSelect}
-                onNewConversation={onNewConversation}
                 primaryColor={company.primary_color}
             />
         </div>

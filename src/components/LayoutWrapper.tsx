@@ -63,7 +63,9 @@ export default function LayoutWrapper({
                 companyName={company?.name}
                 companyLogo={company?.logo_url}
             />
-            <main className='flex-1 ml-60 overflow-auto'>{children}</main>
+            <main className='flex-1 overflow-auto transition-all duration-300'>
+                {children}
+            </main>
         </div>
     );
 }

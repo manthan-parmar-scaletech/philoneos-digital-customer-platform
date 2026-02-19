@@ -143,7 +143,7 @@ export default function ChatPage() {
     }
 
     return (
-        <div className='h-screen bg-white animate-fade-in overflow-hidden'>
+        <div className='h-screen bg-white animate-fade-in overflow-hidden ml-16 transition-all duration-300'>
             {/* Chat Interface */}
             <div className='h-screen'>
                 <ChatInterface
