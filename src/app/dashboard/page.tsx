@@ -9,13 +9,17 @@ import PersonaCard from '@/components/PersonaCard';
 import { Card } from '@/components/ui/Card';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { Button } from '@/components/ui/Button';
-import Sidebar from '@/components/Sidebar';
-import { MessageSquare, Users, LogOut, Plus, Sparkles } from 'lucide-react';
+import { Users, Plus, Sparkles } from 'lucide-react';
+import PersonaCreationModal, {
+    PersonaFormData,
+} from '@/components/PersonaCreationModal';
 
 export default function DashboardPage() {
     const [company, setCompany] = useState<Company | null>(null);
     const [personas, setPersonas] = useState<Persona[]>([]);
     const [loading, setLoading] = useState(true);
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [isCreating, setIsCreating] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -59,14 +63,55 @@ export default function DashboardPage() {
         fetchData();
     }, [router]);
 
+    const handleCreatePersona = async (formData: PersonaFormData) => {
+        const {
+            data: { session },
+        } = await supabase.auth.getSession();
+        if (!session) return;
+
+        setIsCreating(true);
+        try {
+            const { data: newPersona, error } = await supabase
+                .from('personas')
+                .insert({
+                    company_id: session.user.id,
+                    name: formData.occupation,
+                    short_description: formData.short_description,
+                    persona_parameters_json: {
+                        age: formData.age,
+                        occupation: formData.occupation,
+                        location: formData.location,
+                        personality_traits: formData.personality_traits,
+                        motivations: formData.motivations,
+                        pain_points: formData.pain_points,
+                        ...formData.custom_attributes.reduce(
+                            (acc, attr) => {
+                                acc[attr.key] = attr.value;
+                                return acc;
+                            },
+                            {} as Record<string, string>,
+                        ),
+                    },
+                })
+                .select()
+                .single();
+
+            if (error) throw error;
+
+            setPersonas([newPersona, ...personas]);
+            setShowCreateModal(false);
+        } catch (error) {
+            console.error('Error creating persona:', error);
+        } finally {
+            setIsCreating(false);
+        }
+    };
+
     if (loading) {
         return (
-            <div className='min-h-screen bg-gray-50 flex animate-fade-in'>
-                {/* Sidebar */}
-                <Sidebar companyName='Philoneos' />
-
+            <div className='min-h-screen bg-gray-50 animate-fade-in'>
                 {/* Main Content */}
-                <main className='flex-1 ml-60 p-8'>
+                <main className='p-8'>
                     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
                         {[1, 2, 3].map((i) => (
                             <Card
@@ -116,31 +161,29 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className='min-h-screen bg-gray-50 flex animate-fade-in'>
-            {/* Sidebar */}
-            <Sidebar
-                companyName={company?.name}
-                companyLogo={company?.logo_url}
-            />
-
+        <div className='min-h-screen bg-gray-50 animate-fade-in'>
             {/* Main Content */}
-            <main className='flex-1 ml-60 p-8'>
+            <main className='p-8'>
                 {/* Stats Cards */}
 
                 {/* Section Header */}
                 <div className='flex justify-between items-center mb-6'>
                     <div>
                         <h2 className='text-2xl font-bold text-gray-900 mb-1'>
-                            Your Personas
+                            Your Customers
                         </h2>
                         <p className='text-gray-600'>
-                            Select a persona to start a conversation
+                            Select a customer to start a conversation
                         </p>
                     </div>
                     {personas.length > 0 && (
-                        <Button variant='primary' size='md'>
+                        <Button
+                            variant='primary'
+                            size='md'
+                            onClick={() => setShowCreateModal(true)}
+                        >
                             <Plus className='w-4 h-4 mr-2' />
-                            Add Persona
+                            Add Customer
                         </Button>
                     )}
                 </div>
@@ -172,21 +215,32 @@ export default function DashboardPage() {
                                 <Sparkles className='w-8 h-8 text-blue-600' />
                             </div>
                             <h3 className='text-xl font-semibold text-gray-900 mb-2'>
-                                No personas yet
+                                No Customers yet
                             </h3>
                             <p className='text-gray-600 mb-6'>
-                                Create your first synthetic customer persona to
-                                start gathering insights and testing your
-                                messaging.
+                                Create your first digital customer to start
+                                gathering insights and testing your messaging.
                             </p>
-                            <Button variant='primary' size='lg'>
+                            <Button
+                                variant='primary'
+                                size='lg'
+                                onClick={() => setShowCreateModal(true)}
+                            >
                                 <Plus className='w-5 h-5 mr-2' />
-                                Create Your First Persona
+                                Create Your First Customer
                             </Button>
                         </div>
                     </Card>
                 )}
             </main>
+
+            {/* Persona Creation Modal */}
+            <PersonaCreationModal
+                isOpen={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                onSubmit={handleCreatePersona}
+                isLoading={isCreating}
+            />
         </div>
     );
 }

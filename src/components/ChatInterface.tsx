@@ -32,6 +32,10 @@ export default function ChatInterface({
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
 
+    const personaData = persona.persona_parameters_json as {
+        occupation?: string;
+    };
+
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
@@ -182,12 +186,10 @@ export default function ChatInterface({
                     <div className='flex items-center gap-4'>
                         <button
                             onClick={() => router.push('/dashboard')}
-                            className='flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors'
+                            className='flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors cursor-pointer'
                         >
                             <ArrowLeft className='w-5 h-5' />
-                            <span className='font-medium'>
-                                Back to Dashboard
-                            </span>
+                            <span className='font-medium'>Back</span>
                         </button>
                         <div className='h-6 w-px bg-gray-300'></div>
                         <div className='flex items-center gap-3'>
@@ -206,7 +208,7 @@ export default function ChatInterface({
                             </div>
                             <div>
                                 <h1 className='text-sm font-semibold text-gray-900'>
-                                    {persona.name}
+                                    {personaData.occupation}
                                 </h1>
                                 <p className='text-xs text-gray-500'>
                                     {persona.short_description.substring(0, 60)}
@@ -231,7 +233,7 @@ export default function ChatInterface({
                                         </div>
                                         <h3 className='text-xl font-semibold text-gray-900 mb-2'>
                                             Start a conversation with{' '}
-                                            {persona.name}
+                                            {personaData.occupation}
                                         </h3>
                                         <p className='text-gray-600 mb-4'>
                                             {persona.short_description}
@@ -250,7 +252,7 @@ export default function ChatInterface({
                                             role={message.role}
                                             content={message.content}
                                             timestamp={message.created_at}
-                                            personaName={persona.name}
+                                            personaName={personaData.occupation}
                                             personaAvatar={persona.avatar_url}
                                             personaColor={company.primary_color}
                                         />
@@ -271,7 +273,7 @@ export default function ChatInterface({
                         <ChatInput
                             onSend={handleSendMessage}
                             disabled={isLoading}
-                            placeholder={`Message ${persona.name}...`}
+                            placeholder={`Message ${personaData.occupation}...`}
                         />
                     </>
                 ) : (

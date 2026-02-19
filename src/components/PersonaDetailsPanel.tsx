@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { ChevronRight, ChevronDown, Plus, MessageSquare, User, MapPin, Briefcase } from 'lucide-react';
+import {
+    ChevronRight,
+    ChevronDown,
+    Plus,
+    MessageSquare,
+    User,
+    MapPin,
+    Briefcase,
+} from 'lucide-react';
 import { clsx } from 'clsx';
 import type { Persona, Conversation } from '@/types';
 import { Avatar } from './ui/Avatar';
@@ -49,7 +57,7 @@ export default function PersonaDetailsPanel({
                             className='mb-3'
                         />
                         <h3 className='text-lg font-semibold text-gray-900 mb-1'>
-                            {persona.name}
+                            {personaData.occupation}
                         </h3>
                         <p className='text-sm text-gray-600 leading-relaxed'>
                             {persona.short_description}
@@ -64,7 +72,7 @@ export default function PersonaDetailsPanel({
                         className='w-full flex items-center justify-between px-6 py-3 hover:bg-gray-50 transition-colors'
                     >
                         <span className='text-sm font-semibold text-gray-900'>
-                            Persona Details
+                            Customer Details
                         </span>
                         {showDetails ? (
                             <ChevronDown className='w-4 h-4 text-gray-500' />
@@ -79,8 +87,12 @@ export default function PersonaDetailsPanel({
                                 <div className='flex items-start gap-2'>
                                     <User className='w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0' />
                                     <div>
-                                        <p className='text-gray-500 text-xs'>Age</p>
-                                        <p className='text-gray-900'>{personaData.age} years</p>
+                                        <p className='text-gray-500 text-xs'>
+                                            Age
+                                        </p>
+                                        <p className='text-gray-900'>
+                                            {personaData.age} years
+                                        </p>
                                     </div>
                                 </div>
                             )}
@@ -89,8 +101,12 @@ export default function PersonaDetailsPanel({
                                 <div className='flex items-start gap-2'>
                                     <Briefcase className='w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0' />
                                     <div>
-                                        <p className='text-gray-500 text-xs'>Occupation</p>
-                                        <p className='text-gray-900'>{personaData.occupation}</p>
+                                        <p className='text-gray-500 text-xs'>
+                                            Occupation
+                                        </p>
+                                        <p className='text-gray-900'>
+                                            {personaData.occupation}
+                                        </p>
                                     </div>
                                 </div>
                             )}
@@ -99,48 +115,71 @@ export default function PersonaDetailsPanel({
                                 <div className='flex items-start gap-2'>
                                     <MapPin className='w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0' />
                                     <div>
-                                        <p className='text-gray-500 text-xs'>Location</p>
-                                        <p className='text-gray-900'>{personaData.location}</p>
+                                        <p className='text-gray-500 text-xs'>
+                                            Location
+                                        </p>
+                                        <p className='text-gray-900'>
+                                            {personaData.location}
+                                        </p>
                                     </div>
                                 </div>
                             )}
 
                             {personaData.communication_style && (
                                 <div>
-                                    <p className='text-gray-500 text-xs mb-1'>Communication Style</p>
-                                    <p className='text-gray-900'>{personaData.communication_style}</p>
+                                    <p className='text-gray-500 text-xs mb-1'>
+                                        Communication Style
+                                    </p>
+                                    <p className='text-gray-900'>
+                                        {personaData.communication_style}
+                                    </p>
                                 </div>
                             )}
 
-                            {personaData.personality_traits && personaData.personality_traits.length > 0 && (
-                                <div>
-                                    <p className='text-gray-500 text-xs mb-1'>Personality Traits</p>
-                                    <div className='flex flex-wrap gap-1.5'>
-                                        {personaData.personality_traits.map((trait, index) => (
-                                            <span
-                                                key={index}
-                                                className='px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs'
-                                            >
-                                                {trait}
-                                            </span>
-                                        ))}
+                            {personaData.personality_traits &&
+                                personaData.personality_traits.length > 0 && (
+                                    <div>
+                                        <p className='text-gray-500 text-xs mb-1'>
+                                            Personality Traits
+                                        </p>
+                                        <div className='flex flex-wrap gap-1.5'>
+                                            {personaData.personality_traits.map(
+                                                (trait, index) => (
+                                                    <span
+                                                        key={index}
+                                                        className='px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs'
+                                                    >
+                                                        {trait}
+                                                    </span>
+                                                ),
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            )}
+                                )}
 
-                            {personaData.goals && personaData.goals.length > 0 && (
-                                <div>
-                                    <p className='text-gray-500 text-xs mb-1'>Goals</p>
-                                    <ul className='space-y-1'>
-                                        {personaData.goals.map((goal, index) => (
-                                            <li key={index} className='text-gray-900 text-xs flex items-start gap-1.5'>
-                                                <span className='text-blue-600 mt-0.5'>•</span>
-                                                <span>{goal}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
+                            {personaData.goals &&
+                                personaData.goals.length > 0 && (
+                                    <div>
+                                        <p className='text-gray-500 text-xs mb-1'>
+                                            Goals
+                                        </p>
+                                        <ul className='space-y-1'>
+                                            {personaData.goals.map(
+                                                (goal, index) => (
+                                                    <li
+                                                        key={index}
+                                                        className='text-gray-900 text-xs flex items-start gap-1.5'
+                                                    >
+                                                        <span className='text-blue-600 mt-0.5'>
+                                                            •
+                                                        </span>
+                                                        <span>{goal}</span>
+                                                    </li>
+                                                ),
+                                            )}
+                                        </ul>
+                                    </div>
+                                )}
                         </div>
                     )}
                 </div>
@@ -165,42 +204,58 @@ export default function PersonaDetailsPanel({
                         {conversations.length === 0 ? (
                             <div className='text-center py-8 px-4'>
                                 <MessageSquare className='w-8 h-8 text-gray-300 mx-auto mb-2' />
-                                <p className='text-sm text-gray-500'>No conversations yet</p>
+                                <p className='text-sm text-gray-500'>
+                                    No conversations yet
+                                </p>
                             </div>
                         ) : (
                             conversations.map((conversation) => (
                                 <button
                                     key={conversation.id}
-                                    onClick={() => onConversationSelect(conversation)}
+                                    onClick={() =>
+                                        onConversationSelect(conversation)
+                                    }
                                     className={clsx(
                                         'w-full text-left p-3 rounded-lg transition-all duration-200',
-                                        selectedConversation?.id === conversation.id
+                                        selectedConversation?.id ===
+                                            conversation.id
                                             ? 'bg-blue-50 border border-blue-200 shadow-sm'
                                             : 'hover:bg-gray-50 border border-transparent',
                                     )}
                                 >
                                     <div className='flex items-start gap-2'>
-                                        <MessageSquare className={clsx(
-                                            'w-4 h-4 mt-0.5 flex-shrink-0',
-                                            selectedConversation?.id === conversation.id
-                                                ? 'text-blue-600'
-                                                : 'text-gray-400'
-                                        )} />
+                                        <MessageSquare
+                                            className={clsx(
+                                                'w-4 h-4 mt-0.5 flex-shrink-0',
+                                                selectedConversation?.id ===
+                                                    conversation.id
+                                                    ? 'text-blue-600'
+                                                    : 'text-gray-400',
+                                            )}
+                                        />
                                         <div className='flex-1 min-w-0'>
-                                            <p className={clsx(
-                                                'text-sm font-medium truncate',
-                                                selectedConversation?.id === conversation.id
-                                                    ? 'text-blue-900'
-                                                    : 'text-gray-900'
-                                            )}>
+                                            <p
+                                                className={clsx(
+                                                    'text-sm font-medium truncate',
+                                                    selectedConversation?.id ===
+                                                        conversation.id
+                                                        ? 'text-blue-900'
+                                                        : 'text-gray-900',
+                                                )}
+                                            >
                                                 {conversation.title}
                                             </p>
                                             <p className='text-xs text-gray-500 mt-0.5'>
-                                                {new Date(conversation.created_at).toLocaleDateString(undefined, {
-                                                    month: 'short',
-                                                    day: 'numeric',
-                                                    year: 'numeric',
-                                                })}
+                                                {new Date(
+                                                    conversation.created_at,
+                                                ).toLocaleDateString(
+                                                    undefined,
+                                                    {
+                                                        month: 'short',
+                                                        day: 'numeric',
+                                                        year: 'numeric',
+                                                    },
+                                                )}
                                             </p>
                                         </div>
                                     </div>

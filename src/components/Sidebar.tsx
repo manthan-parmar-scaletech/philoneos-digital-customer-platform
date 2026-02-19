@@ -46,33 +46,17 @@ export default function Sidebar({ companyName, companyLogo }: SidebarProps) {
                 {/* Logo/Brand */}
                 <div className='p-6 border-b border-[var(--sidebar-border)]'>
                     <div className='flex items-center gap-3'>
-                        {companyLogo ? (
-                            <img
-                                src={companyLogo}
-                                alt={companyName || 'Logo'}
-                                className='w-8 h-8 rounded-lg'
-                            />
-                        ) : (
-                            <div className='w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center shadow-sm'>
-                                <svg
-                                    viewBox='0 0 24 24'
-                                    fill='none'
-                                    className='w-5 h-5 text-white'
-                                    stroke='currentColor'
-                                    strokeWidth='2'
-                                    strokeLinecap='round'
-                                    strokeLinejoin='round'
-                                >
-                                    <path d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z' />
-                                </svg>
-                            </div>
-                        )}
+                        <img
+                            src={companyLogo}
+                            alt={companyName}
+                            className='w-10 h-10 rounded-lg object-cover'
+                        />
                         <div>
                             <h1 className='text-[var(--sidebar-text)] font-semibold text-sm'>
-                                {companyName || 'Philoneos'}
+                                {companyName}
                             </h1>
                             <p className='text-[var(--sidebar-text-muted)] text-xs'>
-                                Digital Platform
+                                Synthia{' '}
                             </p>
                         </div>
                     </div>
@@ -107,7 +91,7 @@ export default function Sidebar({ companyName, companyLogo }: SidebarProps) {
                 <div className='p-3 border-t border-[var(--sidebar-border)]'>
                     <button
                         onClick={() => setShowSignOutModal(true)}
-                        className='w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-sm font-medium text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover)] hover:text-red-400'
+                        className='w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-sm font-medium text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover)] hover:text-red-400 cursor-pointer'
                     >
                         <LogOut className='w-5 h-5' />
                         <span>Sign Out</span>

@@ -62,13 +62,8 @@ export default function PersonaCard({
                 {/* Name and Title */}
                 <div className='mb-3'>
                     <h3 className='text-xl font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors'>
-                        {persona.name}
+                        {personaData.occupation}
                     </h3>
-                    {personaData.occupation && (
-                        <p className='text-sm text-gray-600 font-medium'>
-                            {personaData.occupation}
-                        </p>
-                    )}
                 </div>
 
                 {/* Description */}

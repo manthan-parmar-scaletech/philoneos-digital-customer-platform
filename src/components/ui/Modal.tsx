@@ -8,6 +8,7 @@ interface ModalProps extends HTMLAttributes<HTMLDivElement> {
     title?: string;
     showCloseButton?: boolean;
     size?: 'sm' | 'md' | 'lg';
+    footer?: React.ReactNode;
 }
 
 export const Modal = forwardRef<HTMLDivElement, ModalProps>(
@@ -18,6 +19,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
             title,
             showCloseButton = true,
             size = 'md',
+            footer,
             children,
             className,
             ...props
@@ -62,7 +64,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
                 <div
                     ref={ref}
                     className={clsx(
-                        'relative bg-white rounded-xl shadow-2xl w-full animate-slide-up',
+                        'relative bg-white rounded-lg shadow-2xl w-full animate-slide-up max-h-[90vh] flex flex-col',
                         sizes[size],
                         className,
                     )}
@@ -96,7 +98,14 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
                     )}
 
                     {/* Content */}
-                    <div className='p-6'>{children}</div>
+                    <div className='p-6 overflow-y-auto flex-1'>{children}</div>
+
+                    {/* Footer */}
+                    {footer && (
+                        <div className='flex items-center justify-end gap-3 p-6 border-t border-gray-200'>
+                            {footer}
+                        </div>
+                    )}
                 </div>
             </div>
         );
