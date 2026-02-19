@@ -6,15 +6,30 @@ interface ChatInputProps {
     onSend: (message: string) => void;
     disabled?: boolean;
     placeholder?: string;
+    value?: string;
+    onChange?: (value: string) => void;
 }
 
 export default function ChatInput({
     onSend,
     disabled = false,
     placeholder = 'Type your message...',
+    value: controlledValue,
+    onChange: controlledOnChange,
 }: ChatInputProps) {
-    const [message, setMessage] = useState('');
+    const [internalMessage, setInternalMessage] = useState('');
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    const isControlled = controlledValue !== undefined;
+    const message = isControlled ? controlledValue : internalMessage;
+
+    const handleChange = (newValue: string) => {
+        if (isControlled && controlledOnChange) {
+            controlledOnChange(newValue);
+        } else {
+            setInternalMessage(newValue);
+        }
+    };
 
     useEffect(() => {
         if (textareaRef.current) {
@@ -27,7 +42,7 @@ export default function ChatInput({
         e.preventDefault();
         if (message.trim() && !disabled) {
             onSend(message.trim());
-            setMessage('');
+            handleChange('');
             if (textareaRef.current) {
                 textareaRef.current.style.height = 'auto';
             }
@@ -51,7 +66,7 @@ export default function ChatInput({
                     <textarea
                         ref={textareaRef}
                         value={message}
-                        onChange={(e) => setMessage(e.target.value)}
+                        onChange={(e) => handleChange(e.target.value)}
                         onKeyDown={handleKeyDown}
                         placeholder={placeholder}
                         disabled={disabled}

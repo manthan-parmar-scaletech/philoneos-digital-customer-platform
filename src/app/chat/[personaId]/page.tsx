@@ -1,13 +1,16 @@
 'use client';
 
-import Image from 'next/image';
-
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import type { Persona, Conversation, Company } from '@/types';
 import ChatInterface from '@/components/ChatInterface';
+import GuidedEntryModal from '@/components/GuidedEntryModal';
 import { PenTool } from 'lucide-react';
+import {
+    generatePromptFromIntent,
+    type ConversationIntent,
+} from '@/lib/promptTemplates';
 
 export default function ChatPage() {
     const params = useParams();
@@ -20,6 +23,11 @@ export default function ChatPage() {
     const [selectedConversation, setSelectedConversation] =
         useState<Conversation | null>(null);
     const [loading, setLoading] = useState(true);
+    const [showGuidedEntry, setShowGuidedEntry] = useState(false);
+    const [prefilledMessage, setPrefilledMessage] = useState<
+        string | undefined
+    >(undefined);
+    const [isCreatingConversation, setIsCreatingConversation] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -68,7 +76,7 @@ export default function ChatPage() {
                 if (conversationsError) throw conversationsError;
                 setConversations(conversationsData || []);
 
-                // Select the most recent conversation or create a new one
+                // Select the most recent conversation if available
                 if (conversationsData && conversationsData.length > 0) {
                     setSelectedConversation(conversationsData[0]);
                 }
@@ -84,29 +92,71 @@ export default function ChatPage() {
     }, [personaId, router]);
 
     const handleNewConversation = async () => {
+        setShowGuidedEntry(true);
+        setPrefilledMessage(undefined);
+    };
+
+    const createConversation = async (message?: string) => {
         const {
             data: { session },
         } = await supabase.auth.getSession();
-        if (!session || !persona) return;
+        if (!session || !persona) return null;
 
         const { data: newConversation, error } = await supabase
             .from('conversations')
             .insert({
                 company_id: session.user.id,
                 persona_id: persona.id,
-                title: `Conversation with ${persona.name}`,
+                title: message
+                    ? message.substring(0, 50) +
+                      (message.length > 50 ? '...' : '')
+                    : `Conversation with ${persona.name}`,
             })
             .select()
             .single();
 
         if (error) {
             console.error('Error creating conversation:', error);
-            return;
+            return null;
         }
 
         setConversations([newConversation, ...conversations]);
-        setSelectedConversation(newConversation);
+        return newConversation;
     };
+
+    const handleIntentSelect = async (
+        intent: ConversationIntent,
+        userInput?: string,
+    ) => {
+        if (!persona) return;
+
+        setIsCreatingConversation(true);
+
+        try {
+            if (intent === 'free_chat') {
+                const newConversation = await createConversation();
+                if (newConversation) {
+                    setSelectedConversation(newConversation);
+                    setShowGuidedEntry(false);
+                    setPrefilledMessage(undefined);
+                }
+            } else if (userInput) {
+                const prompt = generatePromptFromIntent(intent, userInput);
+                const newConversation = await createConversation(prompt);
+                if (newConversation) {
+                    setPrefilledMessage(prompt);
+                    setSelectedConversation(newConversation);
+                    setShowGuidedEntry(false);
+                }
+            }
+        } finally {
+            setIsCreatingConversation(false);
+        }
+    };
+
+    const handlePrefilledMessageChange = useCallback((message: string) => {
+        setPrefilledMessage(message);
+    }, []);
 
     if (!persona || !company) {
         if (loading) {
@@ -142,8 +192,22 @@ export default function ChatPage() {
         );
     }
 
+    const personaData = persona.persona_parameters_json as {
+        occupation?: string;
+    };
+
     return (
         <div className='h-screen bg-white animate-fade-in overflow-hidden'>
+            {/* Guided Entry Modal */}
+            {showGuidedEntry && (
+                <GuidedEntryModal
+                    personaName={personaData.occupation || persona.name}
+                    onSelectIntent={handleIntentSelect}
+                    onClose={() => setShowGuidedEntry(false)}
+                    isLoading={isCreatingConversation}
+                />
+            )}
+
             {/* Chat Interface */}
             <div className='h-screen'>
                 <ChatInterface
@@ -165,6 +229,8 @@ export default function ChatPage() {
                         );
                         setSelectedConversation(updatedConversation);
                     }}
+                    prefilledMessage={prefilledMessage}
+                    onPrefilledMessageChange={handlePrefilledMessageChange}
                 />
             </div>
         </div>

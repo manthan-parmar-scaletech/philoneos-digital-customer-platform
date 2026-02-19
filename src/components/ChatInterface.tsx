@@ -17,6 +17,8 @@ interface ChatInterfaceProps {
     onNewConversation: () => void;
     onConversationSelect: (conversation: Conversation) => void;
     onConversationUpdate: (conversation: Conversation) => void;
+    prefilledMessage?: string;
+    onPrefilledMessageChange?: (message: string) => void;
 }
 
 export default function ChatInterface({
@@ -27,6 +29,8 @@ export default function ChatInterface({
     onNewConversation,
     onConversationSelect,
     onConversationUpdate,
+    prefilledMessage,
+    onPrefilledMessageChange,
 }: ChatInterfaceProps) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -283,6 +287,8 @@ export default function ChatInterface({
                             onSend={handleSendMessage}
                             disabled={isLoading}
                             placeholder={`Message ${personaData.occupation}...`}
+                            value={prefilledMessage}
+                            onChange={onPrefilledMessageChange}
                         />
                     </>
                 ) : (
