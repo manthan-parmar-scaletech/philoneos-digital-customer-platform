@@ -15,14 +15,20 @@ import { supabase } from '@/lib/supabase';
 interface SidebarProps {
     companyName?: string;
     companyLogo?: string;
+    isCollapsed: boolean;
+    onToggleCollapse: () => void;
 }
 
-export default function Sidebar({ companyName, companyLogo }: SidebarProps) {
+export default function Sidebar({
+    companyName,
+    companyLogo,
+    isCollapsed,
+    onToggleCollapse,
+}: SidebarProps) {
     const router = useRouter();
     const pathname = usePathname();
     const [showSignOutModal, setShowSignOutModal] = useState(false);
     const [isSigningOut, setIsSigningOut] = useState(false);
-    const [isCollapsed, setIsCollapsed] = useState(true);
 
     const handleSignOut = async () => {
         setIsSigningOut(true);
@@ -56,7 +62,7 @@ export default function Sidebar({ companyName, companyLogo }: SidebarProps) {
             >
                 {/* Toggle Button */}
                 <button
-                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    onClick={onToggleCollapse}
                     className='absolute -right-3 top-6 z-50 w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors shadow-md'
                     aria-label={
                         isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'

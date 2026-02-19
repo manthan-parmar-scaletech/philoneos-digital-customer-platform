@@ -20,6 +20,19 @@ export default function LayoutWrapper({
 
     const shouldShowSidebar = !noSidebarPages.includes(pathname);
 
+    // Sidebar should be collapsed on chat pages, expanded on dashboard
+    const isChatPage = pathname?.startsWith('/chat');
+    const [isCollapsed, setIsCollapsed] = useState(isChatPage);
+
+    // Collapse sidebar when navigating to chat page, expand when leaving
+    useEffect(() => {
+        if (isChatPage) {
+            setIsCollapsed(true);
+        } else if (shouldShowSidebar) {
+            setIsCollapsed(false);
+        }
+    }, [isChatPage, shouldShowSidebar]);
+
     useEffect(() => {
         if (!shouldShowSidebar) {
             return;
@@ -62,8 +75,12 @@ export default function LayoutWrapper({
             <Sidebar
                 companyName={company?.name}
                 companyLogo={company?.logo_url}
+                isCollapsed={isCollapsed}
+                onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
             />
-            <main className='flex-1 overflow-auto transition-all duration-300'>
+            <main
+                className={`flex-1 overflow-auto transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-60'}`}
+            >
                 {children}
             </main>
         </div>
