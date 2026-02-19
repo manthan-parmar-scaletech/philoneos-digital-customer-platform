@@ -88,7 +88,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
                             {showCloseButton && (
                                 <button
                                     onClick={onClose}
-                                    className='ml-auto text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-lg hover:bg-gray-100'
+                                    className='ml-auto text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-lg hover:bg-gray-100 cursor-pointer'
                                     aria-label='Close modal'
                                 >
                                     <X className='w-5 h-5' />

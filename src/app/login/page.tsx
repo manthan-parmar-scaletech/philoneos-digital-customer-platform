@@ -325,11 +325,11 @@ export default function LoginPage() {
                             </div>
                             <div>
                                 <h3 className='font-semibold mb-1'>
-                                    AI-Powered Personas
+                                    AI-Powered Customers
                                 </h3>
                                 <p className='text-sm text-blue-100 leading-relaxed'>
-                                    Generate realistic customer personas with
-                                    detailed backgrounds and motivations
+                                    Generate realistic customer with detailed
+                                    backgrounds and motivations
                                 </p>
                             </div>
                         </div>

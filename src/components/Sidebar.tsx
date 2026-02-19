@@ -63,7 +63,7 @@ export default function Sidebar({
                 {/* Toggle Button */}
                 <button
                     onClick={onToggleCollapse}
-                    className='absolute -right-3 top-6 z-50 w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors shadow-md'
+                    className='cursor-pointer absolute -right-3 top-6 z-50 w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors shadow-md'
                     aria-label={
                         isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'
                     }
@@ -117,7 +117,7 @@ export default function Sidebar({
                                                 router.push(item.path)
                                             }
                                             className={clsx(
-                                                'w-full flex items-center gap-3 rounded-lg transition-all duration-200 text-sm font-medium',
+                                                'w-full flex items-center gap-3 rounded-lg transition-all duration-200 text-sm font-medium cursor-pointer',
                                                 isCollapsed
                                                     ? 'px-2 py-2.5 justify-center'
                                                     : 'px-3 py-2.5',

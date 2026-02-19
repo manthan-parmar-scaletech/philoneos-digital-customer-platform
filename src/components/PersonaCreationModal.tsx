@@ -362,7 +362,7 @@ export default function PersonaCreationModal({
                                     <button
                                         type='button'
                                         onClick={() => removeTrait(trait)}
-                                        className='hover:text-blue-900'
+                                        className='hover:text-blue-900 cursor-pointer'
                                     >
                                         <X className='w-3 h-3' />
                                     </button>
@@ -416,7 +416,7 @@ export default function PersonaCreationModal({
                                         onClick={() =>
                                             removeMotivation(motivation)
                                         }
-                                        className='text-gray-400 hover:text-gray-600'
+                                        className='text-gray-400 hover:text-gray-600 cursor-pointer'
                                     >
                                         <X className='w-4 h-4' />
                                     </button>
@@ -483,7 +483,7 @@ export default function PersonaCreationModal({
                                         onClick={() =>
                                             removeCustomAttribute(attr.key)
                                         }
-                                        className='text-gray-400 hover:text-gray-600'
+                                        className='text-gray-400 hover:text-gray-600 cursor-pointer'
                                     >
                                         <X className='w-4 h-4' />
                                     </button>
@@ -537,7 +537,7 @@ export default function PersonaCreationModal({
                                         onClick={() =>
                                             removePainPoint(painPoint)
                                         }
-                                        className='text-gray-400 hover:text-gray-600'
+                                        className='text-gray-400 hover:text-gray-600 cursor-pointer'
                                     >
                                         <X className='w-4 h-4' />
                                     </button>

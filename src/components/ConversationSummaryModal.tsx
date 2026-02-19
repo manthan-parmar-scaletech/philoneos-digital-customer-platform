@@ -6,6 +6,8 @@ import {
     List,
     Loader2,
     Sparkles,
+    Copy,
+    Check,
 } from 'lucide-react';
 import type { SummaryData } from '@/types';
 
@@ -138,6 +140,41 @@ export default function ConversationSummaryModal({
     summary,
     isLoading,
 }: ConversationSummaryModalProps) {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopySummary = () => {
+        if (!summary) return;
+
+        let summaryText = '📊 CONVERSATION SUMMARY\n\n';
+
+        if (summary.key_insights && summary.key_insights.length > 0) {
+            summaryText += '💡 KEY INSIGHTS:\n';
+            summary.key_insights.forEach((insight, index) => {
+                summaryText += `${index + 1}. ${insight}\n`;
+            });
+            summaryText += '\n';
+        }
+
+        if (summary.top_objections && summary.top_objections.length > 0) {
+            summaryText += '⚠️ TOP OBJECTIONS:\n';
+            summary.top_objections.forEach((objection, index) => {
+                summaryText += `${index + 1}. ${objection}\n`;
+            });
+            summaryText += '\n';
+        }
+
+        if (summary.executive_summary && summary.executive_summary.length > 0) {
+            summaryText += '📋 EXECUTIVE SUMMARY:\n';
+            summary.executive_summary.forEach((point, index) => {
+                summaryText += `${index + 1}. ${point}\n`;
+            });
+        }
+
+        navigator.clipboard.writeText(summaryText);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
     if (!isOpen) return null;
 
     return (
@@ -165,13 +202,38 @@ export default function ConversationSummaryModal({
                     <p className='text-blue-100 text-sm mt-2'>
                         Key insights and takeaways from your conversation
                     </p>
-                    <button
-                        onClick={onClose}
-                        className='absolute top-6 right-6 p-2 hover:bg-white/20 rounded-xl transition-all duration-200'
-                        aria-label='Close'
-                    >
-                        <X className='w-6 h-6 text-white' />
-                    </button>
+                    <div className='absolute top-6 right-6 flex items-center gap-2'>
+                        {!isLoading && summary && (
+                            <button
+                                onClick={handleCopySummary}
+                                className='cursor-pointer group flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all duration-200 backdrop-blur-sm border border-white/20'
+                                aria-label='Copy summary'
+                            >
+                                {copied ? (
+                                    <>
+                                        <Check className='w-4 h-4 text-white' />
+                                        <span className='text-sm font-medium text-white'>
+                                            Copied!
+                                        </span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Copy className='w-4 h-4 text-white' />
+                                        <span className='text-sm font-medium text-white'>
+                                            Copy
+                                        </span>
+                                    </>
+                                )}
+                            </button>
+                        )}
+                        <button
+                            onClick={onClose}
+                            className='p-2 hover:bg-white/20 rounded-xl transition-all duration-200 cursor-pointer'
+                            aria-label='Close'
+                        >
+                            <X className='w-6 h-6 text-white' />
+                        </button>
+                    </div>
                 </div>
 
                 <div className='flex-1 overflow-y-auto p-8 bg-gray-50'>

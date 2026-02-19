@@ -1,9 +1,9 @@
-import { Avatar } from './ui/Avatar';
-import { Copy, User } from 'lucide-react';
+import { Copy, Sparkles, User } from 'lucide-react';
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import TypingText from './TypingText';
 
 interface MessageBubbleProps {
     role: 'user' | 'assistant';
@@ -12,6 +12,7 @@ interface MessageBubbleProps {
     personaName?: string;
     personaAvatar?: string;
     personaColor?: string;
+    isTyping?: boolean;
 }
 
 export default function MessageBubble({
@@ -21,6 +22,7 @@ export default function MessageBubble({
     personaName,
     personaAvatar,
     personaColor,
+    isTyping = false,
 }: MessageBubbleProps) {
     const [copied, setCopied] = useState(false);
 
@@ -46,13 +48,9 @@ export default function MessageBubble({
                             <User className='w-4 h-4 text-white' />
                         </div>
                     ) : (
-                        <Avatar
-                            src={personaAvatar}
-                            alt={personaName || 'AI'}
-                            size='sm'
-                            fallback={personaName?.charAt(0) || 'AI'}
-                            color={personaColor || '#3b82f6'}
-                        />
+                        <div className='w-8 h-8 bg-[var(--sidebar-bg)] rounded-lg flex items-center justify-center shadow-sm'>
+                            <Sparkles className='w-5 h-5 text-white' />
+                        </div>
                     )}
                 </div>
 
@@ -76,6 +74,8 @@ export default function MessageBubble({
                         <div className='text-gray-900 whitespace-pre-wrap text-right'>
                             {content}
                         </div>
+                    ) : isTyping ? (
+                        <TypingText text={content} speed={20} />
                     ) : (
                         <div className='prose prose-sm max-w-none text-gray-900'>
                             <ReactMarkdown

@@ -47,6 +47,7 @@ export default function ChatInterface({
     );
     const [isSummaryLoading, setIsSummaryLoading] = useState(false);
     const [showSummaryModal, setShowSummaryModal] = useState(false);
+    const [typingMessageId, setTypingMessageId] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
 
@@ -218,6 +219,7 @@ export default function ChatInterface({
             if (aiError) throw aiError;
 
             setMessages((prev) => [...prev, savedAiMessage]);
+            setTypingMessageId(savedAiMessage.id);
 
             if (messages.length === 0) {
                 const { data: updatedConversation } = await supabase
@@ -258,39 +260,50 @@ export default function ChatInterface({
             {/* Main Chat Area */}
             <div className='flex-1 flex flex-col h-screen'>
                 {/* Header */}
-                <div className='border-b border-gray-200 bg-white px-6 py-4'>
-                    <div className='flex items-center gap-4'>
-                        <button
-                            onClick={() => router.push('/dashboard')}
-                            className='flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors cursor-pointer'
-                        >
-                            <ArrowLeft className='w-5 h-5' />
-                            <span className='font-medium'>Back</span>
-                        </button>
-                        <div className='h-6 w-px bg-gray-300'></div>
-                        <div className='flex items-center gap-3'>
-                            <div className='w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center'>
-                                <svg
-                                    viewBox='0 0 24 24'
-                                    fill='none'
-                                    className='w-4 h-4 text-white'
-                                    stroke='currentColor'
-                                    strokeWidth='2'
-                                    strokeLinecap='round'
-                                    strokeLinejoin='round'
-                                >
-                                    <path d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z' />
-                                </svg>
+                <div className='border-b border-gray-200 bg-white px-6 py-4 shadow-sm'>
+                    <div className='flex items-center justify-between'>
+                        <div className='flex items-center gap-4'>
+                            <button
+                                onClick={() => router.push('/dashboard')}
+                                className='flex items-center gap-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-2 py-1.5 rounded-lg transition-colors cursor-pointer'
+                            >
+                                <ArrowLeft className='w-4 h-4' />
+                                <span className='font-medium text-sm'>
+                                    Back
+                                </span>
+                            </button>
+                            <div className='h-6 w-px bg-gray-300'></div>
+                            <div className='flex items-center gap-3'>
+                                <div className='relative'>
+                                    <div className='w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-sm'>
+                                        <MessageSquare className='w-5 h-5 text-white' />
+                                    </div>
+                                    <div className='absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white'></div>
+                                </div>
+                                <div>
+                                    <div className='flex items-center gap-2'>
+                                        <h1 className='text-base font-bold text-gray-900'>
+                                            {personaData.occupation}
+                                        </h1>
+                                        <span className='px-2 py-0.5 bg-blue-100 rounded-md text-xs font-medium text-blue-700'>
+                                            AI Customer
+                                        </span>
+                                    </div>
+                                    <p className='text-xs text-gray-600 mt-0.5'>
+                                        {persona.short_description.substring(
+                                            0,
+                                            60,
+                                        )}
+                                        ...
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <h1 className='text-sm font-semibold text-gray-900'>
-                                    {personaData.occupation}
-                                </h1>
-                                <p className='text-xs text-gray-500'>
-                                    {persona.short_description.substring(0, 60)}
-                                    ...
-                                </p>
-                            </div>
+                        </div>
+                        <div className='hidden md:flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-lg border border-green-200'>
+                            <div className='w-2 h-2 bg-green-500 rounded-full animate-pulse'></div>
+                            <span className='text-xs font-medium text-green-700'>
+                                Active
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -322,7 +335,7 @@ export default function ChatInterface({
                                 </div>
                             ) : (
                                 <div>
-                                    {messages.map((message) => (
+                                    {messages.map((message, index) => (
                                         <MessageBubble
                                             key={message.id}
                                             role={message.role}
@@ -331,6 +344,10 @@ export default function ChatInterface({
                                             personaName={personaData.occupation}
                                             personaAvatar={persona.avatar_url}
                                             personaColor={company.primary_color}
+                                            isTyping={
+                                                message.role === 'assistant' &&
+                                                message.id === typingMessageId
+                                            }
                                         />
                                     ))}
                                     {isLoading && (
