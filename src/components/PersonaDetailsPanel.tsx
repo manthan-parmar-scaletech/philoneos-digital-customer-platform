@@ -12,6 +12,11 @@ import {
 } from 'lucide-react';
 import type { Persona } from '@/types';
 import { Avatar } from './ui/Avatar';
+import {
+    getAvatarUrl,
+    getAvatarType,
+    getAvatarEmoji,
+} from '@/lib/avatarDetection';
 
 interface PersonaDetailsPanelProps {
     persona: Persona;
@@ -33,8 +38,25 @@ export default function PersonaDetailsPanel({
         goals?: string[];
         motivations?: string[];
         pain_points?: string[];
+        gender?: string;
         [key: string]: unknown;
     };
+
+    // Generate intelligent avatar based on persona information
+    const avatarInfo = {
+        name: persona.name,
+        occupation: personaData.occupation,
+        age: personaData.age,
+        description: persona.short_description,
+        gender: personaData.gender,
+    };
+
+    const avatarType = getAvatarType(avatarInfo);
+    const avatarEmoji = getAvatarEmoji(avatarType);
+    const generatedAvatarUrl = getAvatarUrl(avatarInfo);
+
+    // Use existing avatar_url if available, otherwise use generated one
+    const avatarSrc = persona.avatar_url || generatedAvatarUrl;
 
     // Extract custom attributes (anything not in the standard fields)
     const standardFields = [
@@ -58,14 +80,16 @@ export default function PersonaDetailsPanel({
                 {/* Persona Header */}
                 <div className='p-6 border-b border-gray-100'>
                     <div className='flex flex-col items-center text-center'>
-                        <Avatar
-                            src={persona.avatar_url}
-                            alt={persona.name}
-                            size='lg'
-                            fallback={persona.name.charAt(0).toUpperCase()}
-                            color={primaryColor || '#3b82f6'}
-                            className='mb-3'
-                        />
+                        <div className='inline-block p-2 bg-gray-900 rounded-full mb-3'>
+                            <Avatar
+                                src={avatarSrc}
+                                alt={`${personaData.occupation || persona.name} - ${avatarType}`}
+                                size='lg'
+                                fallback={avatarEmoji}
+                                color={primaryColor || '#3b82f6'}
+                                className='ring-4 ring-white shadow-lg'
+                            />
+                        </div>
                         <h3 className='text-lg font-semibold text-gray-900 mb-1'>
                             {personaData.occupation}
                         </h3>

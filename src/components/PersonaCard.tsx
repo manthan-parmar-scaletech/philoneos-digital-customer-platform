@@ -4,6 +4,11 @@ import { Card } from './ui/Card';
 import { Avatar } from './ui/Avatar';
 import { Button } from './ui/Button';
 import { useRouter } from 'next/navigation';
+import {
+    getAvatarUrl,
+    getAvatarType,
+    getAvatarEmoji,
+} from '@/lib/avatarDetection';
 
 interface PersonaCardProps {
     persona: Persona;
@@ -24,7 +29,24 @@ export default function PersonaCard({
         age?: number;
         occupation?: string;
         location?: string;
+        gender?: string;
     };
+
+    // Generate intelligent avatar based on persona information
+    const avatarInfo = {
+        name: persona.name,
+        occupation: personaData.occupation,
+        age: personaData.age,
+        description: persona.short_description,
+        gender: personaData.gender,
+    };
+
+    const avatarType = getAvatarType(avatarInfo);
+    const avatarEmoji = getAvatarEmoji(avatarType);
+    const generatedAvatarUrl = getAvatarUrl(avatarInfo);
+
+    // Use existing avatar_url if available, otherwise use generated one
+    const avatarSrc = persona.avatar_url || generatedAvatarUrl;
 
     return (
         <Card
@@ -49,14 +71,16 @@ export default function PersonaCard({
             <div className='p-6 -mt-10 relative'>
                 {/* Avatar */}
                 <div className='mb-4'>
-                    <Avatar
-                        src={persona.avatar_url}
-                        alt={persona.name}
-                        size='xl'
-                        fallback={persona.name.charAt(0).toUpperCase()}
-                        color={primaryColor || '#3b82f6'}
-                        className='ring-4 ring-white shadow-lg'
-                    />
+                    <div className='inline-block p-2 bg-gray-900 rounded-full'>
+                        <Avatar
+                            src={avatarSrc}
+                            alt={`${personaData.occupation || persona.name} - ${avatarType}`}
+                            size='xl'
+                            fallback={avatarEmoji}
+                            color={primaryColor || '#3b82f6'}
+                            className='ring-4 ring-white shadow-lg'
+                        />
+                    </div>
                 </div>
 
                 {/* Name and Title */}

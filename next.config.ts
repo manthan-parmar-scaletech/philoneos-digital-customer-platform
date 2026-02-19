@@ -8,7 +8,16 @@ const nextConfig: NextConfig = {
                 hostname: 'upload.wikimedia.org',
                 pathname: '/**',
             },
+            {
+                protocol: 'https',
+                hostname: 'api.dicebear.com',
+                pathname: '/**',
+            },
         ],
+        dangerouslyAllowSVG: true,
+        contentDispositionType: 'attachment',
+        contentSecurityPolicy:
+            "default-src 'self'; script-src 'none'; sandbox;",
     },
 };
 
