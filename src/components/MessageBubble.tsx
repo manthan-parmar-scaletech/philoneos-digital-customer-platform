@@ -54,12 +54,12 @@ export default function MessageBubble({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className={clsx(
-                'group relative w-full py-8 px-6',
+                'group relative w-full',
                 isUser ? 'bg-primary-500/[0.01]' : 'bg-transparent'
             )}
         >
             <div className={clsx(
-                'max-w-4xl mx-auto flex items-start gap-2',
+                'max-w-5xl mx-auto flex items-start gap-2',
                 isUser && 'flex-row-reverse'
             )}>
                 {/* Avatar Section */}
@@ -104,7 +104,7 @@ export default function MessageBubble({
 
                     {/* Bubble */}
                     <div className={clsx(
-                        'relative px-6 py-4 rounded-[2rem] transition-all duration-500',
+                        'relative px-4 py-4 rounded-[2rem] transition-all duration-500',
                         isUser 
                             ? 'bg-gradient-to-br from-primary-500/30 to-primary-700/20 backdrop-blur-3xl border border-white/20 shadow-[0_10px_40px_rgba(124,58,237,0.15)] hover:shadow-[0_15px_50px_rgba(124,58,237,0.25)]'
                             : 'bg-white/[0.03] backdrop-blur-3xl border border-white/10 shadow-xl hover:bg-white/[0.05]',
@@ -175,7 +175,7 @@ export default function MessageBubble({
                     )}>
                         <button
                             onClick={handleCopy}
-                            className='text-[10px] font-bold text-white/20 hover:text-white px-2 py-1 rounded-lg transition-colors uppercase tracking-widest'
+                            className='text-[10px] font-bold text-white/20 hover:text-white px-2 py-1 rounded-lg transition-colors uppercase tracking-widest cursor-pointer'
                         >
                             {copied ? 'Captured' : 'Copy'}
                         </button>

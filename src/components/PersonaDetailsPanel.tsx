@@ -1,25 +1,23 @@
-import { useState } from 'react';
+import { staggerContainer, staggerItem } from '@/lib/animations';
 import {
-    ChevronRight,
-    ChevronDown,
-    User,
-    MapPin,
-    Briefcase,
-    Target,
-    AlertCircle,
-    Heart,
-    Sparkles,
-} from 'lucide-react';
-import type { Persona } from '@/types';
-import { Avatar } from './ui/Avatar';
-import { motion, AnimatePresence } from 'framer-motion';
-import { staggerContainer, staggerItem, fadeIn, fadeInUp } from '@/lib/animations';
-import clsx from 'clsx';
-import {
-    getAvatarUrl,
-    getAvatarType,
     getAvatarEmoji,
+    getAvatarType,
+    getAvatarUrl,
 } from '@/lib/avatarDetection';
+import type { Persona } from '@/types';
+import clsx from 'clsx';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+    AlertCircle,
+    Briefcase,
+    Heart,
+    MapPin,
+    Sparkles,
+    Target,
+    User
+} from 'lucide-react';
+import { useState } from 'react';
+import { Avatar } from './ui/Avatar';
 
 interface PersonaDetailsPanelProps {
     persona: Persona;
@@ -30,7 +28,6 @@ export default function PersonaDetailsPanel({
     persona,
     primaryColor,
 }: PersonaDetailsPanelProps) {
-    const [showDetails, setShowDetails] = useState(true);
 
     const personaData = persona.persona_parameters_json as {
         age?: number;
@@ -83,25 +80,25 @@ export default function PersonaDetailsPanel({
             {/* Persona Details Section */}
             <div className='overflow-y-auto flex-1 custom-scrollbar px-6 relative z-10'>
                 {/* Persona Header */}
-                <div className='py-10 mb-2'>
+                <div className='py-6 mb-2'>
                     <div className='flex flex-col items-center text-center'>
-                        <div className='relative group mb-8'>
+                        <div className='relative group mb-4'>
                             <div className='absolute inset-0 bg-primary-500/20 blur-2xl rounded-full opacity-50 group-hover:opacity-100 transition-opacity duration-1000' />
-                            <div className='relative p-1 bg-gradient-to-br from-white/10 to-white/5 rounded-[2.5rem] border border-white/10 shadow-2xl'>
+                            <div className='relative p-1 bg-gradient-to-br from-white/10 to-white/5 rounded-[2rem] border border-white/10 shadow-2xl'>
                                 <Avatar
                                     src={avatarSrc}
                                     alt={persona.name}
-                                    size='xl'
+                                    size='lg'
                                     fallback={avatarEmoji}
                                     color={primaryColor || '#7c3aed'}
-                                    className='ring-4 ring-[#060606] shadow-2xl rounded-[2.3rem]'
+                                    className='ring-4 ring-[#060606] shadow-2xl rounded-[1.8rem]'
                                 />
                             </div>
                         </div>
-                        <h3 className='text-2xl font-bold text-white mb-2 tracking-tight'>
+                        <h3 className='text-xl font-bold text-white mb-1 tracking-tight'>
                             {personaData.occupation || persona.name}
                         </h3>
-                        <p className='text-[13px] text-white/40 leading-relaxed font-semibold uppercase tracking-[0.2em] px-4'>
+                        <p className='text-[11px] text-white/40 leading-relaxed font-semibold uppercase tracking-[0.2em] px-4'>
                             {persona.short_description}
                         </p>
                     </div>
@@ -112,58 +109,39 @@ export default function PersonaDetailsPanel({
                     variants={staggerContainer}
                     initial="hidden"
                     animate="visible"
-                    className="pb-10 space-y-8"
+                    className="pb-10 space-y-5"
                 >
-                    <motion.div variants={fadeIn} className="flex items-center justify-between px-2">
-                        <h4 className="text-[10px] font-bold text-white/20 uppercase tracking-[0.3em]">
-                            Detailed Dossier
-                        </h4>
-                        <button
-                            onClick={() => setShowDetails(!showDetails)}
-                            className='w-8 h-8 flex items-center justify-center bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 rounded-xl transition-all duration-300 group'
-                        >
-                            {showDetails ? (
-                                <ChevronDown className='w-4 h-4 text-white/30 group-hover:text-white transition-colors' />
-                            ) : (
-                                <ChevronRight className='w-4 h-4 text-white/30 group-hover:text-white transition-colors' />
-                            )}
-                        </button>
-                    </motion.div>
-
                     <AnimatePresence>
-                        {showDetails && (
                             <motion.div 
                                 variants={staggerContainer}
                                 initial="hidden"
                                 animate="visible"
                                 exit="hidden"
-                                className='space-y-5'
+                                className='space-y-4'
                             >
-                                {/* Core Info Grid */}
-                                <div className="grid grid-cols-1 gap-4">
+                                {/* Core Info Grid - Compact Horizontal */}
+                                <div className="grid grid-cols-3 gap-2">
                                     {[
-                                        { icon: User, label: 'Age', value: personaData.age ? `${personaData.age} Years` : null, color: 'primary' },
+                                        { icon: User, label: 'Age', value: personaData.age ? `${personaData.age}` : null, color: 'primary' },
                                         { icon: Briefcase, label: 'Sector', value: personaData.occupation, color: 'emerald' },
                                         { icon: MapPin, label: 'Locale', value: personaData.location, color: 'rose' },
                                     ].map((item, i) => item.value && (
                                         <motion.div 
                                             key={i} 
                                             variants={staggerItem}
-                                            className="group p-4 bg-white/[0.02] border border-white/5 rounded-3xl transition-all duration-500 hover:bg-white/[0.05] hover:border-white/15 hover:translate-y-[-2px] shadow-xl"
+                                            className="group p-3 bg-white/[0.02] border border-white/5 rounded-2xl transition-all duration-500 hover:bg-white/[0.05] hover:border-white/15 hover:translate-y-[-2px] shadow-lg flex flex-col items-center text-center justify-center gap-2"
                                         >
-                                            <div className="flex items-center gap-4">
-                                                <div className={clsx(
-                                                    "w-10 h-10 rounded-2xl flex items-center justify-center border transition-all duration-500 group-hover:scale-110 shadow-lg",
-                                                    item.color === 'primary' && 'bg-primary-500/10 border-primary-500/20 text-primary-400 group-hover:bg-primary-500/20',
-                                                    item.color === 'emerald' && 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 group-hover:bg-emerald-500/20',
-                                                    item.color === 'rose' && 'bg-rose-500/10 border-rose-500/20 text-rose-400 group-hover:bg-rose-500/20'
-                                                )}>
-                                                    <item.icon className="w-5 h-5" />
-                                                </div>
-                                                <div>
-                                                    <p className="text-[10px] font-bold text-white/20 uppercase tracking-[0.15em] mb-0.5">{item.label}</p>
-                                                    <p className="text-[14px] font-bold text-white/90">{item.value}</p>
-                                                </div>
+                                            <div className={clsx(
+                                                "w-8 h-8 rounded-xl flex items-center justify-center border transition-all duration-500 group-hover:scale-110 shadow-lg mb-1",
+                                                item.color === 'primary' && 'bg-primary-500/10 border-primary-500/20 text-primary-400 group-hover:bg-primary-500/20',
+                                                item.color === 'emerald' && 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 group-hover:bg-emerald-500/20',
+                                                item.color === 'rose' && 'bg-rose-500/10 border-rose-500/20 text-rose-400 group-hover:bg-rose-500/20'
+                                            )}>
+                                                <item.icon className="w-4 h-4" />
+                                            </div>
+                                            <div>
+                                                <p className="text-[9px] font-bold text-white/20 uppercase tracking-[0.15em] mb-0.5">{item.label}</p>
+                                                <p className="text-[12px] font-bold text-white/90 leading-tight line-clamp-1">{item.value}</p>
                                             </div>
                                         </motion.div>
                                     ))}
@@ -224,7 +202,6 @@ export default function PersonaDetailsPanel({
                                     </motion.div>
                                 ))}
                             </motion.div>
-                        )}
                     </AnimatePresence>
                 </motion.div>
             </div>

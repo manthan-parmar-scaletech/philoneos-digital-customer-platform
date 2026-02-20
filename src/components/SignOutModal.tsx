@@ -67,7 +67,7 @@ export default function SignOutModal({
                                     variant="secondary"
                                     onClick={onClose}
                                     disabled={isLoading}
-                                    className="flex-1 h-14 rounded-2xl border-white/10 hover:bg-white/5"
+                                    className="flex-1 h-14 rounded-2xl text-white"
                                 >
                                     Go Back
                                 </Button>

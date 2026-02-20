@@ -209,7 +209,7 @@ export default function LoginPage() {
                         >
                             <h2 className='text-5xl font-extrabold text-white leading-[1.1] tracking-tight'>
                                 Transform Customer <br />
-                                <span className='text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-violet-400'>
+                                <span className='text-transparent bg-clip-text bg-gradient-to-r from-violet-200 to-violet-400'>
                                     Insights with AI
                                 </span>
                             </h2>

@@ -83,7 +83,7 @@ export default function GuidedEntryModal({
                     <div className='relative px-10 py-8 border-b border-white/5 bg-white/[0.01]'>
                         <div className='flex items-center justify-between'>
                             <div className='flex items-center gap-6'>
-                                <div className='w-14 h-14 bg-gradient-to-br from-primary-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-2xl border border-white/20 transform -rotate-3 hover:rotate-0 transition-transform duration-500'>
+                                <div className='w-14 h-14 bg-gradient-to-br from-indigo-200 to-indigo-600 rounded-2xl flex items-center justify-center shadow-2xl border border-white/20 transform -rotate-3 hover:rotate-0 transition-transform duration-500'>
                                     {selectedIntent ? (
                                         (() => {
                                             const Icon = iconMap[selectedIntent.icon as keyof typeof iconMap];

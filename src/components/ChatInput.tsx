@@ -91,7 +91,7 @@ export default function ChatInput({
                                             ? 'text-white/10 border-white/5 cursor-not-allowed'
                                             : summaryButton.isViewMode
                                                 ? 'bg-primary-500 text-white border-primary-400/50 shadow-lg shadow-primary-500/20'
-                                                : 'bg-white/[0.05] text-primary-400 border-white/10 hover:bg-white/[0.1] hover:text-primary-300'
+                                                : 'bg-white/[0.05] text-primary-400 border-white/10 hover:bg-white/[0.1] hover:text-primary-300 shadow-glow animate-glow'
                                     )}
                                     title={summaryButton.disabled ? 'Need 3+ messages' : summaryButton.label}
                                 >

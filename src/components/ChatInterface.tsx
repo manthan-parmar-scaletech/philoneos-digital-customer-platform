@@ -342,7 +342,7 @@ export default function ChatInterface({
                                 </div>
                             </div>
                         ) : (
-                            <div className='max-w-5xl mx-auto w-full flex-1 px-4 relative z-20'>
+                            <div className='max-w-6xl mx-auto w-full flex-1 px-4 relative z-20'>
                                 <AnimatePresence mode="popLayout">
                                     <motion.div 
                                         key={selectedConversation?.id || 'new'}
@@ -380,7 +380,7 @@ export default function ChatInterface({
 
                     {/* Chat Input Area */}
                     <div className='absolute bottom-0 px-6 left-0 right-0 z-30 pointer-events-none'>
-                        <div className="max-w-4xl mx-auto relative z-10 pointer-events-auto">
+                        <div className="max-w-5xl mx-auto relative z-10 pointer-events-auto">
                             <ChatInput
                                 onSend={handleSendMessage}
                                 disabled={isLoading}
