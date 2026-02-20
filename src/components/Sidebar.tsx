@@ -1,18 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import {
-    LogOut,
-    Search,
-    Menu,
-    Grid,
-    LucideIcon
-} from 'lucide-react';
-import { clsx } from 'clsx';
-import SignOutModal from './SignOutModal';
 import { supabase } from '@/lib/supabase';
-import { motion, AnimatePresence } from 'framer-motion';
+import { clsx } from 'clsx';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+    Grid,
+    LogOut,
+    LucideIcon,
+    Menu
+} from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
+import SignOutModal from './SignOutModal';
 import { Tooltip } from './ui/Tooltip';
 
 interface SidebarProps {
@@ -96,7 +95,7 @@ export default function Sidebar({
                     </div>
 
                     {/* Search Bar */}
-                    {!isCollapsed && (
+                    {/* {!isCollapsed && (
                         <div className='px-4 mb-6'>
                             <div className='relative group cursor-text'>
                                 <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-primary-400 transition-colors pointer-events-none' />
@@ -107,7 +106,7 @@ export default function Sidebar({
                                 />
                             </div>
                         </div>
-                    )}
+                    )} */}
 
                     {/* Navigation */}
                     <div className='flex-1 overflow-y-auto px-2 custom-scrollbar'>
