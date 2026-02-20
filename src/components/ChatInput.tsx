@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Send, FileText, Sparkles } from 'lucide-react';
 import { Button } from './ui/Button';
+import { Tooltip } from './ui/Tooltip';
 import clsx from 'clsx';
 
 interface ChatInputProps {
@@ -80,23 +81,24 @@ export default function ChatInput({
                     >
                         {/* Summary Button Integrated */}
                         {summaryButton?.show && (
-                            <div>
-                                <button
-                                    type='button'
-                                    onClick={summaryButton.onClick}
-                                    disabled={summaryButton.disabled}
-                                    className={clsx(
-                                        'w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer duration-500 border',
-                                        summaryButton.disabled
-                                            ? 'text-white/10 border-white/5 cursor-not-allowed'
-                                            : summaryButton.isViewMode
-                                                ? 'bg-primary-500 text-white border-primary-400/50 shadow-lg shadow-primary-500/20'
-                                                : 'bg-white/[0.05] text-primary-400 border-white/10 hover:bg-white/[0.1] hover:text-primary-300 shadow-glow animate-glow'
-                                    )}
-                                    title={summaryButton.disabled ? 'Need 3+ messages' : summaryButton.label}
-                                >
-                                    {summaryButton.isViewMode ? <FileText className='w-5 h-5' /> : <Sparkles className='w-5 h-5' />}
-                                </button>
+                            <div className="relative">
+                                <Tooltip content={summaryButton.disabled ? 'Need 3+ messages' : summaryButton.label}>
+                                    <button
+                                        type='button'
+                                        onClick={summaryButton.onClick}
+                                        disabled={summaryButton.disabled}
+                                        className={clsx(
+                                            'w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer duration-500 border',
+                                            summaryButton.disabled
+                                                ? 'text-white/10 border-white/5 cursor-not-allowed'
+                                                : summaryButton.isViewMode
+                                                    ? 'bg-primary-500 text-white border-primary-400/50 shadow-lg shadow-primary-500/20'
+                                                    : 'bg-white/[0.05] text-primary-400 border-white/10 hover:bg-white/[0.1] hover:text-primary-300 shadow-glow animate-glow'
+                                        )}
+                                    >
+                                        {summaryButton.isViewMode ? <FileText className='w-5 h-5' /> : <Sparkles className='w-5 h-5' />}
+                                    </button>
+                                </Tooltip>
                             </div>
                         )}
 
