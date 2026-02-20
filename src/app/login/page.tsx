@@ -151,18 +151,6 @@ export default function LoginPage() {
                             <ArrowRight className='w-5 h-5 group-hover:translate-x-1 transition-transform' />
                         </MagicButton>
                     </form>
-
-                    <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.7 }}
-                        className='mt-10 pt-8 border-t border-white/5 flex flex-col items-center gap-6'
-                    >
-                        <div className='flex items-center gap-2 text-gray-500 text-xs font-medium'>
-                            <ShieldCheck className='w-4 h-4 text-primary-500/70' />
-                            <span>Secure authentication powered by Supabase</span>
-                        </div>
-                    </motion.div>
                 </motion.div>
             </div>
 
