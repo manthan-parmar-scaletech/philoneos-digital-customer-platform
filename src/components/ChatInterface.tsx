@@ -261,6 +261,7 @@ export default function ChatInterface({
         }
     };
 
+
     return (
         <div className='flex h-screen bg-[#060606] text-white relative overflow-hidden font-sans font-medium'>
             {/* Mesh Gradient Background Elements - Isolated from events */}
@@ -295,7 +296,7 @@ export default function ChatInterface({
                                 <div className='flex flex-col'>
                                     <div className='flex items-center gap-3'>
                                         <h1 className='text-xl font-bold tracking-tight text-white leading-none'>
-                                            {persona?.name || 'Loading...'}
+                                            {personaData?.occupation || persona?.name || 'Loading...'}
                                         </h1>
                                         <div className="flex items-center gap-1.5 px-2.5 py-1 bg-primary-500/10 border border-primary-400/20 rounded-lg shadow-[0_0_15px_rgba(124,58,237,0.1)]">
                                             <div className="w-1.5 h-1.5 bg-primary-400 rounded-full animate-pulse" />
@@ -355,7 +356,7 @@ export default function ChatInterface({
                                                 role={m.role}
                                                 content={m.content}
                                                 timestamp={m.created_at}
-                                                personaName={persona?.name}
+                                                personaName={personaData?.occupation}
                                                 personaAvatar={persona?.avatar_url}
                                                 personaColor={company.primary_color}
                                                 isTyping={m.id === typingMessageId}

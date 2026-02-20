@@ -174,47 +174,47 @@ export default function ConversationSummaryModal({
                         className='relative bg-[#0a0a0a] rounded-[2.5rem] shadow-[0_32px_120px_rgba(0,0,0,0.8)] w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col border border-white/10'
                     >
                         {/* Header */}
-                        <div className='relative px-10 py-8 border-b border-white/5 bg-white/[0.01]'>
+                        <div className='relative px-8 py-6 border-b border-white/5 bg-white/[0.01]'>
                             <div className='flex items-center justify-between'>
-                                <div className='flex items-center gap-6'>
-                                    <div className='w-14 h-14 bg-gradient-to-br from-indigo-500 to-primary-600 rounded-2xl flex items-center justify-center shadow-2xl border border-white/20 transform -rotate-3 hover:rotate-0 transition-transform duration-500'>
-                                        <Sparkles className='w-7 h-7 text-white' />
+                                <div className='flex items-center gap-5'>
+                                    <div className='w-12 h-12 bg-gradient-to-br from-indigo-500 to-primary-600 rounded-xl flex items-center justify-center shadow-2xl border border-white/20 transform -rotate-2 hover:rotate-0 transition-transform duration-500'>
+                                        <Sparkles className='w-6 h-6 text-white' />
                                     </div>
-                                    <div className='space-y-1'>
-                                        <h2 className='text-3xl font-bold text-white tracking-tight'>
+                                    <div className='space-y-0.5'>
+                                        <h2 className='text-2xl font-bold text-white tracking-tight'>
                                             Conversation Summary
                                         </h2>
-                                        <p className='text-white/40 text-[15px] font-medium'>
+                                        <p className='text-white/40 text-sm font-medium'>
                                             Digitalised insights from your interaction
                                         </p>
                                     </div>
                                 </div>
-                                <div className='flex items-center gap-3'>
+                                <div className='flex items-center gap-2'>
                                     {!isLoading && summary && (
                                         <button
                                             onClick={handleCopySummary}
-                                            className=' cursor-pointer h-12 px-6 bg-white/[0.03] hover:bg-white/[0.08] text-white rounded-2xl transition-all duration-300 border border-white/10 flex items-center gap-2 font-bold text-sm uppercase tracking-widest'
+                                            className=' cursor-pointer h-10 px-5 bg-white/[0.03] hover:bg-white/[0.08] text-white rounded-xl transition-all duration-300 border border-white/10 flex items-center gap-2 font-bold text-xs uppercase tracking-widest'
                                         >
                                             {copied ? (
-                                                <Check className='w-4 h-4 text-emerald-400' />
+                                                <Check className='w-3.5 h-3.5 text-emerald-400' />
                                             ) : (
-                                                <Copy className='w-4 h-4' />
+                                                <Copy className='w-3.5 h-3.5' />
                                             )}
                                             {copied ? 'Captured' : 'Copy'}
                                         </button>
                                     )}
                                     <button
                                         onClick={onClose}
-                                        className='cursor-pointer w-12 h-12 flex items-center justify-center rounded-2xl bg-white/[0.03] hover:bg-white/[0.08] text-white/40 hover:text-white transition-all duration-300 border border-white/10'
+                                        className='cursor-pointer w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.03] hover:bg-white/[0.08] text-white/40 hover:text-white transition-all duration-300 border border-white/10'
                                     >
-                                        <X className='w-6 h-6' />
+                                        <X className='w-5 h-5' />
                                     </button>
                                 </div>
                             </div>
                         </div>
 
                         {/* Content Area */}
-                        <div className='flex-1 overflow-y-auto custom-scrollbar p-10 bg-[#060606]'>
+                        <div className='flex-1 overflow-y-auto custom-scrollbar p-6 bg-[#060606]'>
                             {isLoading ? (
                                 <LoadingAnimation />
                             ) : summary ? (
@@ -222,31 +222,31 @@ export default function ConversationSummaryModal({
                                     variants={staggerContainer}
                                     initial="hidden"
                                     animate="visible"
-                                    className='grid grid-cols-1 gap-8 max-w-5xl mx-auto'
+                                    className='grid grid-cols-1 gap-6 max-w-5xl mx-auto'
                                 >
                                     {/* Key Insights */}
                                     {summary.key_insights?.length > 0 && (
                                         <motion.div variants={staggerItem} className='relative group'>
                                             <div className='absolute -inset-0.5 bg-gradient-to-r from-indigo-500/20 to-primary-500/20 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-1000' />
-                                            <div className='relative bg-white/[0.02] rounded-[2rem] border border-white/5 overflow-hidden backdrop-blur-3xl'>
-                                                <div className='px-8 py-6 border-b border-white/5 bg-white/[0.01] flex items-center justify-between'>
+                                            <div className='relative bg-white/[0.02] rounded-[1.5rem] border border-white/5 overflow-hidden backdrop-blur-3xl'>
+                                                <div className='px-6 py-4 border-b border-white/5 bg-white/[0.01] flex items-center justify-between'>
                                                     <div className='flex items-center gap-4'>
-                                                        <div className='w-12 h-12 bg-indigo-500/20 rounded-xl flex items-center justify-center border border-indigo-500/30'>
-                                                            <Lightbulb className='w-6 h-6 text-indigo-400' />
+                                                        <div className='w-10 h-10 bg-indigo-500/20 rounded-xl flex items-center justify-center border border-indigo-500/30'>
+                                                            <Lightbulb className='w-5 h-5 text-indigo-400' />
                                                         </div>
-                                                        <h3 className='text-xl font-bold text-white tracking-tight'>Key Insights</h3>
+                                                        <h3 className='text-lg font-bold text-white tracking-tight'>Key Insights</h3>
                                                     </div>
-                                                    <span className='px-3 py-1 bg-indigo-500/10 text-indigo-400 rounded-full text-[10px] font-bold uppercase tracking-widest border border-indigo-500/20'>
+                                                    <span className='px-2.5 py-0.5 bg-indigo-500/10 text-indigo-400 rounded-full text-[9px] font-bold uppercase tracking-widest border border-indigo-500/20'>
                                                         Strategic
                                                     </span>
                                                 </div>
-                                                <div className='p-8 space-y-4'>
+                                                <div className='p-6 space-y-3'>
                                                     {summary.key_insights.map((insight, index) => (
-                                                        <div key={index} className='flex items-start gap-5 group/item'>
-                                                            <div className='flex-shrink-0 w-8 h-8 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-sm font-bold text-indigo-400 mt-0.5 group-hover/item:border-indigo-500/30 transition-colors'>
+                                                        <div key={index} className='flex items-start gap-4 group/item'>
+                                                            <div className='flex-shrink-0 w-7 h-7 rounded-lg bg-white/[0.03] border border-white/5 flex items-center justify-center text-xs font-bold text-indigo-400 mt-0.5 group-hover/item:border-indigo-500/30 transition-colors'>
                                                                 {index + 1}
                                                             </div>
-                                                            <p className='text-[15px] leading-relaxed text-white/70 group-hover/item:text-white/90 transition-colors'>
+                                                            <p className='text-sm leading-relaxed text-white/70 group-hover/item:text-white/90 transition-colors'>
                                                                 {insight}
                                                             </p>
                                                         </div>
@@ -256,27 +256,27 @@ export default function ConversationSummaryModal({
                                         </motion.div>
                                     )}
 
-                                    <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+                                    <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                                         {/* Top Objections */}
                                         {summary.top_objections?.length > 0 && (
                                             <motion.div variants={staggerItem} className='relative group'>
-                                                <div className='absolute -inset-0.5 bg-gradient-to-r from-rose-500/20 to-red-500/20 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-1000' />
-                                                <div className='relative bg-white/[0.02] h-full rounded-[2rem] border border-white/5 overflow-hidden backdrop-blur-3xl'>
-                                                    <div className='px-8 py-6 border-b border-white/5 bg-white/[0.01] flex items-center justify-between'>
+                                                <div className='absolute -inset-0.5 bg-gradient-to-r from-rose-500/20 to-red-500/20 rounded-[1.5rem] blur opacity-0 group-hover:opacity-100 transition duration-1000' />
+                                                <div className='relative bg-white/[0.02] h-full rounded-[1.5rem] border border-white/5 overflow-hidden backdrop-blur-3xl'>
+                                                    <div className='px-6 py-4 border-b border-white/5 bg-white/[0.01] flex items-center justify-between'>
                                                         <div className='flex items-center gap-4'>
-                                                            <div className='w-12 h-12 bg-rose-500/20 rounded-xl flex items-center justify-center border border-rose-500/30'>
-                                                                <AlertCircle className='w-6 h-6 text-rose-400' />
+                                                            <div className='w-10 h-10 bg-rose-500/20 rounded-xl flex items-center justify-center border border-rose-500/30'>
+                                                                <AlertCircle className='w-5 h-5 text-rose-400' />
                                                             </div>
-                                                            <h3 className='text-xl font-bold text-white tracking-tight'>Points of Friction</h3>
+                                                            <h3 className='text-lg font-bold text-white tracking-tight'>Points of Friction</h3>
                                                         </div>
                                                     </div>
-                                                    <div className='p-8 space-y-5'>
+                                                    <div className='p-6 space-y-3.5'>
                                                         {summary.top_objections.map((objection, index) => (
-                                                            <div key={index} className='flex items-start gap-4 p-4 bg-rose-500/[0.02] rounded-2xl border border-rose-500/10 hover:border-rose-500/30 transition-all'>
+                                                            <div key={index} className='flex items-start gap-3 p-3.5 bg-rose-500/[0.02] rounded-xl border border-rose-500/10 hover:border-rose-500/30 transition-all'>
                                                                 <div className='flex-shrink-0 mt-1'>
-                                                                    <div className='w-2 h-2 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.5)]' />
+                                                                    <div className='w-1.5 h-1.5 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.5)]' />
                                                                 </div>
-                                                                <p className='text-[14px] leading-relaxed text-white/60 hover:text-white/90 transition-colors'>
+                                                                <p className='text-[13px] leading-relaxed text-white/60 hover:text-white/90 transition-colors'>
                                                                     {objection}
                                                                 </p>
                                                             </div>
@@ -289,23 +289,23 @@ export default function ConversationSummaryModal({
                                         {/* Executive Summary */}
                                         {summary.executive_summary?.length > 0 && (
                                             <motion.div variants={staggerItem} className='relative group'>
-                                                <div className='absolute -inset-0.5 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-1000' />
-                                                <div className='relative bg-white/[0.02] h-full rounded-[2rem] border border-white/5 overflow-hidden backdrop-blur-3xl'>
-                                                    <div className='px-8 py-6 border-b border-white/5 bg-white/[0.01] flex items-center justify-between'>
+                                                <div className='absolute -inset-0.5 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-[1.5rem] blur opacity-0 group-hover:opacity-100 transition duration-1000' />
+                                                <div className='relative bg-white/[0.02] h-full rounded-[1.5rem] border border-white/5 overflow-hidden backdrop-blur-3xl'>
+                                                    <div className='px-6 py-4 border-b border-white/5 bg-white/[0.01] flex items-center justify-between'>
                                                         <div className='flex items-center gap-4'>
-                                                            <div className='w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center border border-emerald-500/30'>
-                                                                <Layout className='w-6 h-6 text-emerald-400' />
+                                                            <div className='w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center border border-emerald-500/30'>
+                                                                <Layout className='w-5 h-5 text-emerald-400' />
                                                             </div>
-                                                            <h3 className='text-xl font-bold text-white tracking-tight'>Synthesis</h3>
+                                                            <h3 className='text-lg font-bold text-white tracking-tight'>Synthesis</h3>
                                                         </div>
                                                     </div>
-                                                    <div className='p-8 space-y-5'>
+                                                    <div className='p-6 space-y-4'>
                                                         {summary.executive_summary.map((point, index) => (
-                                                            <div key={index} className='flex items-start gap-5'>
-                                                                <span className='flex-shrink-0 text-xl font-black text-emerald-500/20'>
+                                                            <div key={index} className='flex items-start gap-4'>
+                                                                <span className='flex-shrink-0 text-lg font-black text-emerald-500/20'>
                                                                     {(index + 1).toString().padStart(2, '0')}
                                                                 </span>
-                                                                <p className='text-[14px] leading-relaxed text-white/60 hover:text-white/90 transition-colors'>
+                                                                <p className='text-[13px] leading-relaxed text-white/60 hover:text-white/90 transition-colors'>
                                                                     {point}
                                                                 </p>
                                                             </div>

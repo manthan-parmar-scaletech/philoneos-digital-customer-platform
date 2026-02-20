@@ -1,7 +1,7 @@
 'use client';
 
 import type { Persona } from '@/types';
-import { MessageCircle, User } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 import { Avatar } from './ui/Avatar';
 import { MagicButton } from './ui/MagicButton';
 import { useRouter } from 'next/navigation';
@@ -107,7 +107,27 @@ export default function PersonaCard({
                     <div className='flex items-center justify-center gap-2 mb-6 text-[10px]'>
                         {personaData.age && (
                             <div className='flex items-center gap-1.5 px-3 py-1 bg-white/[0.03] border border-white/5 rounded-xl text-gray-300'>
-                                <User className='w-3 h-3 text-primary-400' />
+                                {(avatarType === 'woman' || avatarType === 'girl') ? (
+                                    // Female symbol ♀
+                                    <svg viewBox='0 0 24 24' className='w-3.5 h-3.5' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                                        <circle cx='12' cy='9' r='6' stroke='#f472b6' strokeWidth='2.2' fill='none' />
+                                        <line x1='12' y1='15' x2='12' y2='22' stroke='#f472b6' strokeWidth='2.2' strokeLinecap='round' />
+                                        <line x1='9' y1='19' x2='15' y2='19' stroke='#f472b6' strokeWidth='2.2' strokeLinecap='round' />
+                                    </svg>
+                                ) : (avatarType === 'man' || avatarType === 'boy') ? (
+                                    // Male symbol ♂
+                                    <svg viewBox='0 0 24 24' className='w-3.5 h-3.5' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                                        <circle cx='10' cy='14' r='6' stroke='#60a5fa' strokeWidth='2.2' fill='none' />
+                                        <line x1='14.5' y1='9.5' x2='21' y2='3' stroke='#60a5fa' strokeWidth='2.2' strokeLinecap='round' />
+                                        <polyline points='16,3 21,3 21,8' stroke='#60a5fa' strokeWidth='2.2' strokeLinecap='round' strokeLinejoin='round' fill='none' />
+                                    </svg>
+                                ) : (
+                                    // Fallback neutral icon
+                                    <svg viewBox='0 0 24 24' className='w-3.5 h-3.5 text-primary-400' fill='none' stroke='currentColor' strokeWidth='2.2' strokeLinecap='round' strokeLinejoin='round'>
+                                        <path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2' />
+                                        <circle cx='12' cy='7' r='4' />
+                                    </svg>
+                                )}
                                 <span className='font-semibold'>
                                     {personaData.age}
                                 </span>
