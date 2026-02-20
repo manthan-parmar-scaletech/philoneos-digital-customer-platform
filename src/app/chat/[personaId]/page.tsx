@@ -74,11 +74,14 @@ export default function ChatPage() {
                         .order('created_at', { ascending: false });
 
                 if (conversationsError) throw conversationsError;
-                setConversations(conversationsData || []);
+                const fetchedConversations = conversationsData || [];
+                setConversations(fetchedConversations);
 
-                // Select the most recent conversation if available
-                if (conversationsData && conversationsData.length > 0) {
-                    setSelectedConversation(conversationsData[0]);
+                // Select the most recent conversation if available, otherwise show guided entry
+                if (fetchedConversations.length > 0) {
+                    setSelectedConversation(fetchedConversations[0]);
+                } else {
+                    setShowGuidedEntry(true);
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
