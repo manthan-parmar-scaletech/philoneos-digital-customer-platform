@@ -435,19 +435,53 @@ export function getRandomAvatarEmoji(avatarType: AvatarType): string {
     return emojis[0];
 }
 
+// Premium 3D Animated/Illustrated Avatar Collection (Microsoft Fluent UI style)
+const AVATAR_COLLECTION = {
+    male: [
+        'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/People/Man%20Office%20Worker.png',
+        'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/People/Man%20Technologist.png',
+        'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/People/Man%20Teacher.png',
+        'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/People/Man%20Student.png',
+        'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/People/Man%20Mechanic.png',
+    ],
+    female: [
+        'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/People/Woman%20Office%20Worker.png',
+        'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/People/Woman%20Technologist.png',
+        'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/People/Woman%20Teacher.png',
+        'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/People/Woman%20Student.png',
+        'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/People/Woman%20Mechanic.png',
+    ],
+    neutral: [
+        'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/People/Person.png',
+        'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/People/Person%20Office%20Worker.png',
+    ]
+};
+
 /**
- * Gets avatar URL from a public avatar API service
+ * Gets avatar URL from our curated collection or fallback to DiceBear
+ * Uses a simple hash of the seed to deterministically pick an image
  */
 export function getAvatarUrl(info: PersonaInfo): string {
     const avatarType = getAvatarType(info);
     const seed = info.name || info.occupation || 'default';
 
-    // Using DiceBear API for consistent, professional avatars
-    // You can choose different styles: adventurer, avataaars, big-smile, bottts, etc.
-    const style =
-        avatarType === 'boy' || avatarType === 'girl'
-            ? 'adventurer'
-            : 'avataaars';
+    // Create a simple numeric hash from the seed string
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+        hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+        hash |= 0; // Convert to 32bit integer
+    }
+    hash = Math.abs(hash);
 
-    return `https://api.dicebear.com/7.x/${style}/svg?seed=${encodeURIComponent(seed)}`;
+    // Select collection based on type
+    let collection = AVATAR_COLLECTION.neutral;
+    if (avatarType === 'man' || avatarType === 'boy') {
+        collection = AVATAR_COLLECTION.male;
+    } else if (avatarType === 'woman' || avatarType === 'girl') {
+        collection = AVATAR_COLLECTION.female;
+    }
+
+    // Pick image using modulo
+    const index = hash % collection.length;
+    return collection[index];
 }

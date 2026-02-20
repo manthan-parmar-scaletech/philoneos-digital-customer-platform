@@ -288,7 +288,7 @@ export default function ChatInterface({
                             <div className='flex items-center gap-6'>
                                 <button
                                     onClick={() => router.push('/dashboard')}
-                                    className='p-2.5 bg-white/[0.03] hover:bg-white/[0.08] rounded-2xl border border-white/5 transition-all duration-300 group'
+                                    className='cursor-pointer p-2.5 bg-white/[0.03] hover:bg-white/[0.08] rounded-2xl border border-white/5 transition-all duration-300 group'
                                 >
                                     <ArrowLeft className='w-5 h-5 text-white/40 group-hover:text-white transition-colors' />
                                 </button>
