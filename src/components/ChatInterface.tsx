@@ -299,7 +299,7 @@ export default function ChatInterface({
                                             {personaData?.occupation || persona?.name || 'Loading...'}
                                         </h1>
                                         <div className="flex items-center gap-1.5 px-2.5 py-1 bg-primary-500/10 border border-primary-400/20 rounded-lg shadow-[0_0_15px_rgba(124,58,237,0.1)]">
-                                            <div className="w-1.5 h-1.5 bg-primary-400 rounded-full animate-pulse" />
+                                            {/* <div className="w-1.5 h-1.5 bg-primary-400 rounded-full animate-pulse" /> */}
                                             <span className="text-[10px] font-bold text-primary-400 uppercase tracking-[0.15em]">AI Customer</span>
                                         </div>
                                     </div>
