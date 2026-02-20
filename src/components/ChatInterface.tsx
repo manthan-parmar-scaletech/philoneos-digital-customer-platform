@@ -51,22 +51,30 @@ export default function ChatInterface({
     const [showSummaryModal, setShowSummaryModal] = useState(false);
     const [typingMessageId, setTypingMessageId] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
 
     const personaData = persona.persona_parameters_json as {
         occupation?: string;
     };
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollTo({
+                top: scrollContainerRef.current.scrollHeight,
+                behavior
+            });
+        }
     };
 
+    // Scroll more reliably when messages change or conversation switches
     useEffect(() => {
+        const behavior = messages.length <= 1 ? 'instant' : 'smooth';
         const timer = setTimeout(() => {
-            scrollToBottom();
-        }, 200);
+            scrollToBottom(behavior);
+        }, 100);
         return () => clearTimeout(timer);
-    }, [messages, isLoading, selectedConversation]);
+    }, [messages, isLoading, selectedConversation?.id]);
 
     useEffect(() => {
         if (selectedConversation) {
@@ -274,7 +282,7 @@ export default function ChatInterface({
                 {/* Main Chat Area */}
                 <div className='flex-1 flex flex-col h-dvh justify-start relative overflow-hidden bg-white/[0.01]'>
                     {/* Header */}
-                    <div className='z-20 border-b border-white/[0.05] bg-white/[0.01] backdrop-blur-3xlshadow-[0_8px_32px_rgba(0,0,0,0.4)] px-8 py-5'>
+                    <div className='z-20 border-b border-white/[0.05] bg-white/[0.01] backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] px-8 py-5'>
                         <div className='max-w-5xl mx-auto flex items-center justify-between'>
                             <div className='flex items-center gap-6'>
                                 <button
@@ -309,7 +317,10 @@ export default function ChatInterface({
                     </div>
 
                     {/* Messages Area */}
-                    <div className='max-h-[calc(100vh-12rem)] overflow-y-auto relative custom-scrollbar flex flex-col pt-4'>
+                    <div 
+                        ref={scrollContainerRef}
+                        className='flex-1 overflow-y-auto relative custom-scrollbar flex flex-col pt-4'
+                    >
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-full bg-gradient-to-b from-primary-500/[0.03] via-transparent to-transparent pointer-events-none" />
                         
                         {!selectedConversation && messages.length === 0 ? (

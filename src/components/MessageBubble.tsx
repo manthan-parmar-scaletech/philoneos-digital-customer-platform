@@ -59,7 +59,7 @@ export default function MessageBubble({
             )}
         >
             <div className={clsx(
-                'max-w-4xl mx-auto flex items-start gap-6',
+                'max-w-4xl mx-auto flex items-start gap-2',
                 isUser && 'flex-row-reverse'
             )}>
                 {/* Avatar Section */}
